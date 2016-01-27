@@ -9,6 +9,7 @@
   },
   "devDependencies": {},
   "scripts": {
+    "start": "node service.js",
     "test": "node service.js"
   },
   "author": "",
