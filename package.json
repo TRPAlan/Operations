@@ -1,7 +1,6 @@
 {
   "name": "theredpin",
   "version": "1.0.0",
-  "description": "",
   "main": "service.js",
   "dependencies": {
     "express": "^4.13.4",
@@ -13,5 +12,6 @@
     "test": "node service.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "description": "testing app"
 }
