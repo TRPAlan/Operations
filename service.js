@@ -13,6 +13,6 @@ app.post('/', function (req, res) {
   res.send('Got a POST request');
 }); 
 
-app.listen(app.get('port'), function() {
-  console.log('Node app is running on port', app.get('port'));
+app.listen( process.env.PORT || 5000, function() {
+  console.log('Node app is running on port', process.env.PORT );
 });
