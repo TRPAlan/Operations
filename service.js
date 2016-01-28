@@ -142,11 +142,11 @@ function SFLead() {
 	}
 }*/
 
-//proccess.env.FACEBOOK_PAGE_TOKEN || 
+//
 app.get('/testing', function(req,res) {
 	var options = {
   		host: 'graph.facebook.com',
-  		path: '/1691930984420345?access_token='+ ('CAAXwetntJgEBAG1rxRLO7U2ZB7nHnZBP8RIJaNBUVZBwsfoyabZAnDfp95nudYdzBkOpZBgeLDQ3fHz7EawYDSSOOrsg3CWAsjZBSgnY6PeQXr8tAn4MNZB6UIpn88SoOdeKDRKxNW2arKBse4BZCv68pG1F2Nn7UNx65BI4nBucIjIS63JTkynF8wUJ3MazlBuAK1rAKyATIHxMGSdTSTGI')
+  		path: '/1691930984420345?access_token='+ proccess.env.FACEBOOK_PAGE_TOKEN 
 	};
 	sfdcAuthenticate(null);
 	https.request(options, callback).end();
