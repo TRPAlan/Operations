@@ -120,7 +120,6 @@ var callback = function(response) {
 	      	}
 	  	}
 	});
-
   });
 };
 
@@ -139,6 +138,7 @@ function SFLead() {
 
 //
 app.get('/testing', function(req,res) {
+	console.log('HERE');
 	sfdcAuthenticate();
 	var options = {
   		host: 'graph.facebook.com',
