@@ -15,16 +15,14 @@ var sfdcOrg = nforce.createConnection({
 var oauth;
 
 function sfdcAuthenticate(){
-	console.log('Authenticate called');
+	console.log('SF Authenticate called');
 	// authenticate using username-password oauth flow
-	sfdcOrg.authenticate({ 
-		username: process.env.SALESFORCE_USERNAME,
-		password: process.env.SALESFORCE_PASSWORD },
-                function(err, resp){
+	sfdcOrg.authenticate({ username: process.env.SALESFORCE_USERNAME, password: process.env.SALESFORCE_PASSWORD },
+        function(err, resp){
 		if(err) {
-		  console.log('Error: ' + err.message);
+		  console.log('SF Authentication Error: ' + err.message);
 		} else {
-		  console.log('Access Token: ' + resp.access_token);
+		  console.log('SF Authentication Access Token: ' + resp.access_token);
 		  oauth = resp;
 		}
 	});
@@ -141,11 +139,11 @@ function SFLead() {
 
 //
 app.get('/testing', function(req,res) {
+	sfdcAuthenticate();
 	var options = {
   		host: 'graph.facebook.com',
   		path: '/1691930984420345?access_token='+ process.env.FACEBOOK_PAGE_TOKEN 
 	};
-	sfdcAuthenticate();
 	https.request(options, callback).end();
 
 	res.send('hello'); 
