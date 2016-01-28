@@ -44,13 +44,14 @@ app.post('/FacebookLeadGen', function (req, res) {
   res.send('yay');
 }); 
 
-
 // testing making get request
 var https = require('https');
 var options = {
   host: 'graph.facebook.com',
-  path: '/1691930984420345'
+  path: '/120804831263518?fields=access_token'
 };
+
+var pageAccessToken; 
 
 var callback = function(response) {
   var str = '';
@@ -61,11 +62,20 @@ var callback = function(response) {
   //the whole response has been recieved, so we just print it out here
   response.on('end', function () {
     console.log(str);
+    pageAccessToken = str; 
   });
 };
 
 app.get('/testing', function(req,res) {
 	https.request(options, callback).end();
+	var p = '/1691930984420345?access_token=' +pageAccessToken;
+	var newOptions = {
+		host: 'graph.facebook.com',
+		path: p
+	}
+
+	https.request(newOptions, callback).end(); 
+  
 	res.send('hello'); 
 });
 
