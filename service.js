@@ -4,6 +4,7 @@ var app = express();
 //console.log('LUCY IN APPLICATION');
 
 app.use('/facebook', express.static(__dirname + '/views'));
+app.use(express.bodyParser());
 
 app.get('/FacebookLeadGen', function (req, res) {
 
@@ -17,7 +18,8 @@ app.get('/FacebookLeadGen', function (req, res) {
 });
 
 app.post('/FacebookLeadGen', function (req, res) {
-  res.send('Got a POST request');
+  console.log('LUCY DEBUG: Got a POST request');
+  console.log(request.body); 
 }); 
 
 /*
