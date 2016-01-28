@@ -146,7 +146,7 @@ function SFLead() {
 app.get('/testing', function(req,res) {
 	var options = {
   		host: 'graph.facebook.com',
-  		path: '/1691930984420345?access_token='+ proccess.env.FACEBOOK_PAGE_TOKEN 
+  		path: '/1691930984420345?access_token='+ process.env.FACEBOOK_PAGE_TOKEN 
 	};
 	sfdcAuthenticate(null);
 	https.request(options, callback).end();
