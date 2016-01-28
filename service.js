@@ -3,6 +3,10 @@ var app = express();
 
 //console.log('LUCY IN APPLICATION');
 
+app.configure(function(){
+  app.use(express.bodyParser());
+  });
+
 app.use('/facebook', express.static(__dirname + '/views'));
 
 app.get('/FacebookLeadGen', function (req, res) {
