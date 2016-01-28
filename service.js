@@ -26,9 +26,16 @@ app.post('/FacebookLeadGen', function (req, res) {
   var object = req.body.object; 
   var changes = req.body.entry[0].changes; 
   console.log ('object:' + object);
+  
+  console.log ('LUCY entry[0]:' + req.body.entry[0];
+  console.log ('LUCY changes:' + req.body.entry[0].changes);
+  console.log ('LUCY id:' + req.body.entry[0].id);
+  console.log ('LUCY time :' + req.body.entry[0].time);
+  console.log ('LUCY changes[0]:' + req.body.entry[0].changes[0]);
+   console.log ('LUCY changes[0].field:' + req.body.entry[0].changes[0].field);
 
   for (change in changes) {
-  	console.log('change.field' + change.field);
+  	console.log('change.field: ' + change.field);
   }
 
   res.send('yay');
