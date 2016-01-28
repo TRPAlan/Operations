@@ -19,6 +19,7 @@ app.get('/FacebookLeadGen', function (req, res) {
 app.post('/FacebookLeadGen', function (req, res) {
   console.log('LUCY DEBUG: Got a POST request');
   console.log(req.body); 
+  res.send('yay');
 }); 
 
 /*
