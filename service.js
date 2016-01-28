@@ -1,11 +1,11 @@
 var express = require('express');
 var app = express();
 
-//console.log('LUCY IN APPLICATION');
+var bodyParser = require('body-parser');
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); 
 
-app.configure(function(){
-  app.use(express.bodyParser());
-  });
+//console.log('LUCY IN APPLICATION');
 
 app.use('/facebook', express.static(__dirname + '/views'));
 
