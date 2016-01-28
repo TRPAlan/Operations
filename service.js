@@ -34,7 +34,7 @@ app.post('/FacebookLeadGen', function (req, res) {
   console.log ('LUCY changes[0]:' + req.body.entry[0].changes[0]);
    console.log ('LUCY changes[0].field:' + req.body.entry[0].changes[0].field);
 
-  for (change in changes) {
+  for (var change in changes) {
   	console.log('change.field: ' + change.field);
   }
 
