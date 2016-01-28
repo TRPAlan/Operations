@@ -79,7 +79,7 @@ var callback = function(response) {
     for (var i=0; i< dataList.length; i++){
     	if (dataList[i].name == 'full_name') {
     		console.log('lead name: ' + dataList[i].values[0]);
-    		newLead.set('Name', dataList[i].values[0]);
+    		newLead.set('LastName', dataList[i].values[0]);
     	}
     	if (dataList[i].name == 'email') {
     		console.log('lead email: ' + dataList[i].values[0]);
