@@ -4,7 +4,6 @@ var app = express();
 //console.log('LUCY IN APPLICATION');
 
 app.use('/facebook', express.static(__dirname + '/views'));
-app.use(express.bodyParser());
 
 app.get('/FacebookLeadGen', function (req, res) {
 
