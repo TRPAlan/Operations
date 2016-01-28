@@ -23,13 +23,8 @@ app.post('/FacebookLeadGen', function (req, res) {
   console.log('LUCY DEBUG: Got a POST request');
   console.log(req.body); 
 
-  var object = req.object; 
-  var changes[] = req.body.entry.changes; 
+  var object = req.body.object; 
   console.log ('object:' + object);
-  
-  for (change in changes) {
-  	console.log('change field:' + change.field); 
-  }	
 
   res.send('yay');
 }); 
