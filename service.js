@@ -3,9 +3,10 @@ var app = express();
 
 //console.log('LUCY IN APPLICATION');
 
-app.get('/', function (req, res) {
+app.get('/FacebookLeadGen', function (req, res) {
 
-  if (req.param('hub.challenge')) {
+	// get verify token from facebook and send response accordingly
+  if (req.param('hub.verify_token') == 'theredpin') {
   	res.send(req.param('hub.challenge'));
   } else {
 	res.send('Hello World!');
@@ -13,7 +14,7 @@ app.get('/', function (req, res) {
 
 });
 
-app.post('/', function (req, res) {
+app.post('/FacebookLeadGen', function (req, res) {
   res.send('Got a POST request');
 }); 
 
