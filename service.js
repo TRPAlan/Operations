@@ -1,25 +1,59 @@
 var express = require('express');
 var app = express();
+var https = require('https');
 
+// SALESFORCE SETUP
+var nforce = require('nforce');
+var salesforceApi = process.env.SALESFORCE_API || '35.0';
+var sfdcOrg = nforce.createConnection({
+	clientId: process.env.SALESFORCE_CONSUMER_KEY,
+	clientSecret: process.env.SALESFORCE_CONSUMER_SECRET,
+	redirectUri: '',
+	apiVersion: salesforceApi,  // optional, defaults to v24.0
+	environment: 'sandbox'  // optional, sandbox or production, production default
+});
+var oauth;
+
+function sfdcAuthenticate(callback){
+	console.log('Authenticate called');
+	// authenticate using username-password oauth flow
+	sfdcOrg.authenticate({ 
+		username: process.env.SALESFORCE_USERNAME,
+		password: process.env.SALESFORCE_PASSWORD },
+                function(err, resp){
+		if(err) {
+		  console.log('Error: ' + err.message);
+		} else {
+		  console.log('Access Token: ' + resp.access_token);
+		  oauth = resp;
+		}
+		if(callback){
+			callback();
+		}
+	});
+}
+
+// BODY PARSER
 var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); 
 
-//console.log('LUCY IN APPLICATION');
+// SERVE STATIC PAGES
+app.use('/facebook', express.static(__dirname + '/views')); 
 
-app.use('/facebook', express.static(__dirname + '/views'));
-
-// for authentication, our token is theredpin (go to facebook developer > webhooks )
+// GET: FacebookLeadGen
 app.get('/FacebookLeadGen', function (req, res) {
   // get verify token from facebook and send response accordingly
-  if (req.param('hub.verify_token') == process.env.VERIFY_TOKEN ) {
+  if (req.param('hub.verify_token') == (process.env.VERIFY_TOKEN) ) {
   	res.send(req.param('hub.challenge'));
   } else {
 	res.send('Hello World!');
   }
 });
 
+// POST: FacebookLeadGen
 app.post('/FacebookLeadGen', function (req, res) {
+  
   console.log('LUCY DEBUG: Got a POST request');
   console.log(req.body); 
 
@@ -32,7 +66,8 @@ app.post('/FacebookLeadGen', function (req, res) {
   console.log ('LUCY id:' + req.body.entry[0].id);
   console.log ('LUCY time :' + req.body.entry[0].time);
   console.log ('LUCY changes[0]:' + req.body.entry[0].changes[0]);
-   console.log ('LUCY changes[0].field:' + req.body.entry[0].changes[0].field);
+  console.log ('LUCY changes[0].field:' + req.body.entry[0].changes[0].field);
+
 
   for (var i=0; i< req.body.entry[0].changes.length; i++){
   	console.log('change.field: ' + req.body.entry[0].changes[i].field);
@@ -42,16 +77,9 @@ app.post('/FacebookLeadGen', function (req, res) {
   }
 
   res.send('yay');
+
 }); 
 
-// testing making get request
-var https = require('https');
-var options = {
-  host: 'graph.facebook.com',
-  path: '/1691930984420345?access_token='+'CAAXwetntJgEBAG1rxRLO7U2ZB7nHnZBP8RIJaNBUVZBwsfoyabZAnDfp95nudYdzBkOpZBgeLDQ3fHz7EawYDSSOOrsg3CWAsjZBSgnY6PeQXr8tAn4MNZB6UIpn88SoOdeKDRKxNW2arKBse4BZCv68pG1F2Nn7UNx65BI4nBucIjIS63JTkynF8wUJ3MazlBuAK1rAKyATIHxMGSdTSTGI'
-};
-
-var pageAccessToken; 
 
 var callback = function(response) {
   var str = '';
@@ -62,41 +90,69 @@ var callback = function(response) {
   //the whole response has been recieved, so we just print it out here
   response.on('end', function () {
     console.log(str);
+    var dataList = JSON.parse(str).field_data;
+    
+    var newLead = nforce.createSObject('Lead');
+
+    for (var i=0; i< dataList.length; i++){
+    	if (dataList[i].name == 'full_name') {
+    		console.log('lead name: ' + dataList[i].values[0]);
+    		newLead.set('Name', dataList[i].values[0]);
+    	}
+    	if (dataList[i].name == 'email') {
+    		console.log('lead email: ' + dataList[i].values[0]);
+    		newLead.set('Email', dataList[i].values[0]);
+    	}
+    	if (dataList[i].name == 'phone_number') {
+    		console.log('lead phone: ' + dataList[i].values[0]);
+    		newLead.set('Phone', dataList[i].values[0]);
+    	}
+    }
+
+	sfdcOrg.insert({ sobject: newLead, oauth: oauth }, function(err, resp){
+  		if (err) {
+	      	console.log(err);
+	    	if (err.statusCode == 401){
+	    		console.log('Logging in again...');
+	    		sfdcAuthenticate(createLead(leadRec, request, response));
+	    	}
+	    	else{
+	    		console.log('INSERT ERROR: ' + err.message);
+	    	}
+	    } else {
+	    	if (resp.success == true) {
+				console.log('INSERT SUCCESS');
+	      	}
+	  	}
+	});
+
   });
 };
 
+/*
+function SFLead() {
+	this.setName = function(name) {
+		this.name = name; 
+	};
+	this.setEmail = function(email){
+		this.email = email;
+	}
+	this.setPhone = function (phone){
+		this.phone = phone; 
+	}
+}*/
+
+//proccess.env.FACEBOOK_PAGE_TOKEN || 
 app.get('/testing', function(req,res) {
+	var options = {
+  		host: 'graph.facebook.com',
+  		path: '/1691930984420345?access_token='+ ('CAAXwetntJgEBAG1rxRLO7U2ZB7nHnZBP8RIJaNBUVZBwsfoyabZAnDfp95nudYdzBkOpZBgeLDQ3fHz7EawYDSSOOrsg3CWAsjZBSgnY6PeQXr8tAn4MNZB6UIpn88SoOdeKDRKxNW2arKBse4BZCv68pG1F2Nn7UNx65BI4nBucIjIS63JTkynF8wUJ3MazlBuAK1rAKyATIHxMGSdTSTGI')
+	};
+	sfdcAuthenticate(null);
 	https.request(options, callback).end();
 
 	res.send('hello'); 
 });
-
-
-/*
-var url = 'https://graph.facebook.com/1691930984420345';
-var request = http.get(url, function (response) {
-    // data is streamed in chunks from the server
-    // so we have to handle the "data" event    
-    var buffer = "", 
-        data,
-        route;
-
-    response.on("data", function (chunk) {
-        buffer += chunk;
-    }); 
-
-    response.on("end", function (err) {
-        // finished transferring data
-        // dump the raw data
-        console.log(buffer);
-        console.log("\n");
-        data = JSON.parse(buffer);
-
-        // extract the distance and time
-        console.log("full name: " + data.field_data[0].values[1]);
-        console.log("email: " + data.field_data[1].values[1]);
-    }); 
-}); 
 
 
 /*
