@@ -25,8 +25,8 @@ app.post('/FacebookLeadGen', function (req, res) {
 
   var object = req.body.object; 
   var changes = req.body.entry[0].changes; 
+
   console.log ('object:' + object);
-  
   console.log ('LUCY entry[0]:' + req.body.entry[0]);
   console.log ('LUCY changes:' + req.body.entry[0].changes);
   console.log ('LUCY id:' + req.body.entry[0].id);
@@ -37,8 +37,9 @@ app.post('/FacebookLeadGen', function (req, res) {
   for (var i=0; i< req.body.entry[0].changes.length; i++){
   	console.log('change.field: ' + req.body.entry[0].changes[i].field);
   	console.log('change.leadgenID: ' + req.body.entry[0].changes[i].value.leadgen_id);
+  	console.log('change.formID: ' + req.body.entry[0].changes[i].value.form_id);
+  	console.log('change.created_time: ' + req.body.entry[0].changes[i].value.created_time);
   }
-
 
   res.send('yay');
 }); 
