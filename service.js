@@ -34,9 +34,11 @@ app.post('/FacebookLeadGen', function (req, res) {
   console.log ('LUCY changes[0]:' + req.body.entry[0].changes[0]);
    console.log ('LUCY changes[0].field:' + req.body.entry[0].changes[0].field);
 
-  for (var chge in req.body.entry[0].changes) {
-  	console.log('change.field: ' + chge.field);
+  for (var i=0; i< req.body.entry[0].changes.length; i++){
+  	console.log('change.field: ' + req.body.entry[0].changes[i].field);
+  	console.log('change.leadgenID: ' + req.body.entry[0].changes[i].value.leadgen_id);
   }
+
 
   res.send('yay');
 }); 
