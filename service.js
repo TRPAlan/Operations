@@ -6,6 +6,7 @@ var https = require('https');
 var nforce = require('nforce');
 var salesforceApi = process.env.SALESFORCE_API || '35.0';
 var sfdcOrg = nforce.createConnection({
+	mode: 'single',
 	clientId: process.env.SALESFORCE_CONSUMER_KEY,
 	clientSecret: process.env.SALESFORCE_CONSUMER_SECRET,
 	redirectUri: '',
@@ -13,20 +14,6 @@ var sfdcOrg = nforce.createConnection({
 	environment: 'sandbox'  // optional, sandbox or production, production default
 });
 var oauth;
-
-function sfdcAuthenticate(){
-	console.log('SF Authenticate called');
-	// authenticate using username-password oauth flow
-	sfdcOrg.authenticate({ username: process.env.SALESFORCE_USERNAME, password: process.env.SALESFORCE_PASSWORD },
-        function(err, resp){
-		if(err) {
-		  console.log('SF Authentication Error: ' + err.message);
-		} else {
-		  console.log('SF Authentication Access Token: ' + resp.access_token);
-		  oauth = resp;
-		}
-	});
-}
 
 // BODY PARSER
 var bodyParser = require('body-parser');
@@ -139,12 +126,20 @@ function SFLead() {
 //
 app.get('/testing', function(req,res) {
 	console.log('HERE');
-	sfdcAuthenticate();
-	var options = {
-  		host: 'graph.facebook.com',
-  		path: '/1691930984420345?access_token='+ process.env.FACEBOOK_PAGE_TOKEN 
-	};
-	https.request(options, callback).end();
+	sfdcOrg.authenticate({ username: process.env.SALESFORCE_USERNAME, password: process.env.SALESFORCE_PASSWORD },
+        function(err, resp){
+		if(err) {
+		  console.log('SF Authentication Error: ' + err.message);
+		} else {
+		  console.log('SF Authentication Access Token: ' + resp.access_token);
+		  oauth = resp;
+		  var options = {
+  			host: 'graph.facebook.com',
+  			path: '/1691930984420345?access_token='+ process.env.FACEBOOK_PAGE_TOKEN 
+			};
+			https.request(options, callback).end();
+		}
+	});
 
 	res.send('hello'); 
 });
