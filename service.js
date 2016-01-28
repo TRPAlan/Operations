@@ -44,10 +44,65 @@ app.post('/FacebookLeadGen', function (req, res) {
   res.send('yay');
 }); 
 
+
+// testing making get request
+var https = require('https');
+var options = {
+  host: 'graph.facebook.com',
+  path: '/1691930984420345'
+};
+
+var callback = function(response) {
+  var str = '';
+  //another chunk of data has been recieved, so append it to `str`
+  response.on('data', function (chunk) {
+    str += chunk;
+  });
+  //the whole response has been recieved, so we just print it out here
+  response.on('end', function () {
+    console.log(str);
+  });
+};
+
+app.get('/testing', function(req,res) {
+	https.request(options, callback).end();
+	res.send('hello'); 
+});
+
+
+/*
+var url = 'https://graph.facebook.com/1691930984420345';
+var request = http.get(url, function (response) {
+    // data is streamed in chunks from the server
+    // so we have to handle the "data" event    
+    var buffer = "", 
+        data,
+        route;
+
+    response.on("data", function (chunk) {
+        buffer += chunk;
+    }); 
+
+    response.on("end", function (err) {
+        // finished transferring data
+        // dump the raw data
+        console.log(buffer);
+        console.log("\n");
+        data = JSON.parse(buffer);
+
+        // extract the distance and time
+        console.log("full name: " + data.field_data[0].values[1]);
+        console.log("email: " + data.field_data[1].values[1]);
+    }); 
+}); 
+
+
 /*
 app.get('/SubscribeFacebookPage', function(req, res) {
 	res.render('/index'); 
 });*/
+
+
 
 app.listen( process.env.PORT || 5000, function() {
   console.log('Node app is running on port', process.env.PORT);
