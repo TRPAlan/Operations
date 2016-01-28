@@ -12,7 +12,7 @@ app.use('/facebook', express.static(__dirname + '/views'));
 // for authentication, our token is theredpin (go to facebook developer > webhooks )
 app.get('/FacebookLeadGen', function (req, res) {
   // get verify token from facebook and send response accordingly
-  if (req.param('hub.verify_token') == 'theredpin') {
+  if (req.param('hub.verify_token') == process.env.VERIFY_TOKEN ) {
   	res.send(req.param('hub.challenge'));
   } else {
 	res.send('Hello World!');
@@ -48,7 +48,7 @@ app.post('/FacebookLeadGen', function (req, res) {
 var https = require('https');
 var options = {
   host: 'graph.facebook.com',
-  path: '/120804831263518?fields=access_token'
+  path: '/1691930984420345?access_token='+'CAAXwetntJgEBAG1rxRLO7U2ZB7nHnZBP8RIJaNBUVZBwsfoyabZAnDfp95nudYdzBkOpZBgeLDQ3fHz7EawYDSSOOrsg3CWAsjZBSgnY6PeQXr8tAn4MNZB6UIpn88SoOdeKDRKxNW2arKBse4BZCv68pG1F2Nn7UNx65BI4nBucIjIS63JTkynF8wUJ3MazlBuAK1rAKyATIHxMGSdTSTGI'
 };
 
 var pageAccessToken; 
@@ -62,20 +62,12 @@ var callback = function(response) {
   //the whole response has been recieved, so we just print it out here
   response.on('end', function () {
     console.log(str);
-    pageAccessToken = str; 
   });
 };
 
 app.get('/testing', function(req,res) {
 	https.request(options, callback).end();
-	var p = '/1691930984420345?access_token=' +pageAccessToken;
-	var newOptions = {
-		host: 'graph.facebook.com',
-		path: p
-	}
 
-	https.request(newOptions, callback).end(); 
-  
 	res.send('hello'); 
 });
 

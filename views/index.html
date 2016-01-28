@@ -34,6 +34,7 @@
   function myFacebookLogin() {
     FB.login(function(response){
       console.log('Successfully logged in', response);
+
       FB.api('/me/accounts', function(response) {
         console.log('Successfully retrieved pages', response);
         var pages = response.data;
@@ -49,6 +50,7 @@
           ul.appendChild(li);
         }
       });
+      
     }, {scope: 'manage_pages'});
   }
 </script>
