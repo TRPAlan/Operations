@@ -14,7 +14,7 @@ var sfdcOrg = nforce.createConnection({
 });
 var oauth;
 
-function sfdcAuthenticate(callback){
+function sfdcAuthenticate(){
 	console.log('Authenticate called');
 	// authenticate using username-password oauth flow
 	sfdcOrg.authenticate({ 
@@ -26,9 +26,6 @@ function sfdcAuthenticate(callback){
 		} else {
 		  console.log('Access Token: ' + resp.access_token);
 		  oauth = resp;
-		}
-		if(callback){
-			callback();
 		}
 	});
 }
@@ -148,7 +145,7 @@ app.get('/testing', function(req,res) {
   		host: 'graph.facebook.com',
   		path: '/1691930984420345?access_token='+ process.env.FACEBOOK_PAGE_TOKEN 
 	};
-	sfdcAuthenticate(null);
+	sfdcAuthenticate();
 	https.request(options, callback).end();
 
 	res.send('hello'); 
