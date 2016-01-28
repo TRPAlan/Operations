@@ -109,7 +109,7 @@ var callback = function(response) {
 	      	console.log(err);
 	    	if (err.statusCode == 401){
 	    		console.log('Logging in again...');
-	    		sfdcAuthenticate(createLead(leadRec, request, response));
+	    		sfdcAuthenticate();
 	    	}
 	    	else{
 	    		console.log('INSERT ERROR: ' + err.message);
