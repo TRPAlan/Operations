@@ -1,7 +1,6 @@
 
 // module dependencies
 var express = require('express');
-var https = require('https');
 var mongoose = require('mongoose');
 var app = express();
 

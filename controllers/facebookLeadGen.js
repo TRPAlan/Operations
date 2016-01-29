@@ -1,3 +1,4 @@
+var https = require('https');
 
 // SALESFORCE SETUP
 var nforce = require('nforce');
