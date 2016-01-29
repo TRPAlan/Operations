@@ -45,7 +45,7 @@ var insertLeadCallback = function(response) {
 	      	}
 	  	}
 	  });
-	}
+	});
 }
 
 // POST 
