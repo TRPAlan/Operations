@@ -1,15 +1,13 @@
 
 // GET 
 exports.getFacebookLeadGen = function (req, res) {
-	  function (req, res) {
 	  // get verify token from facebook and send response accordingly
 	  if (req.param('hub.verify_token') == (process.env.VERIFY_TOKEN) ) {
 	  	res.send(req.param('hub.challenge'));
 	  } else {
 		res.send('Invalid Verify Token');
 	  }
-	}
-}; 
+};
 
 
 var insertLeadCallback = function(response) {
