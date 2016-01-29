@@ -43,7 +43,7 @@ app.get('/FacebookLeadGen', facebookLeadGenController.getFacebookLeadGen);
 app.post('/FacebookLeadGen', facebookLeadGenController.postFacebookLeadGen); 
 
 
-app.get('/testing', ffacebookLeadGenController.postFacebookLeadGen);
+app.get('/testing', facebookLeadGenController.postFacebookLeadGen);
 
 
 /*
