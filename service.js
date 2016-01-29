@@ -130,7 +130,7 @@ function getAndInsertLead(leadGenId) {
 }
 app.get('/testing', function(req,res) {
 	console.log('HERE');
-	getAndInsertLead('192625037432720');
+	getAndInsertLead('1691930984420345');
 	res.send('hello'); 
 });
 
