@@ -37,115 +37,13 @@ mongoose.connection.on('error', function() {
 app.use('/facebook', express.static(__dirname + '/views')); 
 
 // GET: FacebookLeadGen
-app.get('/FacebookLeadGen', function (req, res) {
-  // get verify token from facebook and send response accordingly
-  if (req.param('hub.verify_token') == (process.env.VERIFY_TOKEN) ) {
-  	res.send(req.param('hub.challenge'));
-  } else {
-	res.send('Invalid Verify Token');
-  }
-});
+app.get('/FacebookLeadGen', facebookLeadGenController.getFacebookLeadGen);
 
 // POST: FacebookLeadGen
-app.post('/FacebookLeadGen', function(req, res) {
-	  console.log('LUCY DEBUG: Got a POST request');
-  console.log(req.body); 
-
-  var object = req.body.object; 
-  var changes = req.body.entry[0].changes; 
-
-  console.log ('object:' + object);
-  console.log ('LUCY entry[0]:' + req.body.entry[0]);
-  console.log ('LUCY changes:' + req.body.entry[0].changes);
-  console.log ('LUCY id:' + req.body.entry[0].id);
-  console.log ('LUCY time :' + req.body.entry[0].time);
-  console.log ('LUCY changes[0]:' + req.body.entry[0].changes[0]);
-  console.log ('LUCY changes[0].field:' + req.body.entry[0].changes[0].field);
+app.post('/FacebookLeadGen', facebookLeadGenController.postFacebookLeadGen); 
 
 
-  for (var i=0; i< req.body.entry[0].changes.length; i++){
-  	console.log('change.field: ' + req.body.entry[0].changes[i].field);
-  	console.log('change.leadgenID: ' + req.body.entry[0].changes[i].value.leadgen_id);
-  	console.log('change.formID: ' + req.body.entry[0].changes[i].value.form_id);
-  	console.log('change.created_time: ' + req.body.entry[0].changes[i].value.created_time);
-
-  	getAndInsertLead(req.body.entry[0].changes[i].value.leadgen_id);
-  }
-
-  res.send('yay');
-}); 
-
-
-function getAndInsertLead(leadGenId) {
-	sfdcOrg.authenticate({ username: process.env.SALESFORCE_USERNAME, password: process.env.SALESFORCE_PASSWORD },
-        function(err, resp){
-		if(err) {
-		  console.log('SF Authentication Error: ' + err.message);
-		} else {
-		  console.log('SF Authentication Access Token: ' + resp.access_token);
-		  https.request({
-  			host: 'graph.facebook.com',
-  			path: '/' + leadGenId + '?access_token='+ process.env.FACEBOOK_PAGE_TOKEN 
-			}, insertLeadCallback).end();
-		}
-	});
-}
-
-
-var insertLeadCallback = function(response) {
-  var str = '';
-  //another chunk of data has been recieved, so append it to `str`
-  response.on('data', function (chunk) {
-    str += chunk;
-  });
-  //the whole response has been recieved, so we just print it out here
-  response.on('end', function () {
-    console.log(str);
-    var dataList = JSON.parse(str).field_data;
-    
-    var newLead = nforce.createSObject('Lead');
-
-    for (var i=0; i< dataList.length; i++){
-    	if (dataList[i].name == 'full_name') {
-    		console.log('lead name: ' + dataList[i].values[0]);
-    		newLead.set('LastName', dataList[i].values[0]);
-    	}
-    	if (dataList[i].name == 'email') {
-    		console.log('lead email: ' + dataList[i].values[0]);
-    		newLead.set('Email', dataList[i].values[0]);
-    	}
-    	if (dataList[i].name == 'phone_number') {
-    		console.log('lead phone: ' + dataList[i].values[0]);
-    		newLead.set('Phone', dataList[i].values[0]);
-    	}
-    }
-
-	sfdcOrg.insert({ sobject: newLead }, function(err, resp){
-  		if (err) {
-	      	console.log(err);
-	    	if (err.statusCode == 401){
-	    		console.log('Logging in again...');
-	    		sfdcAuthenticate();
-	    	}
-	    	else{
-	    		console.log('INSERT ERROR: ' + err.message);
-	    	}
-	    } else {
-	    	if (resp.success == true) {
-				console.log('INSERT SUCCESS');
-	      	}
-	  	}
-	});
-
-  });
-};
-
-
-app.get('/testing', function(req,res) {
-	console.log('HERE');
-	getAndInsertLead('1691930984420345');
-	res.send('hello'); 
-});
+app.get('/testing', ffacebookLeadGenController.postFacebookLeadGen);
 
 
 /*
