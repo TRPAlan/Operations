@@ -3,20 +3,7 @@
 var express = require('express');
 var https = require('https');
 var mongoose = require('mongoose');
-var nforce = require('nforce');
 var app = express();
-
-// SALESFORCE SETUP
-var salesforceApi = process.env.SALESFORCE_API || '35.0';
-var sfdcOrg = nforce.createConnection({
-	mode: 'single',
-	clientId: process.env.SALESFORCE_CONSUMER_KEY,
-	clientSecret: process.env.SALESFORCE_CONSUMER_SECRET,
-	redirectUri: '',
-	apiVersion: salesforceApi,  // optional, defaults to v24.0
-	environment: 'sandbox',  // optional, sandbox or production, production default
-	autorefresh: true
-});
 
 // Controllers (route handlers)
 var facebookLeadGenController = require('./controllers/facebookLeadGen');

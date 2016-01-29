@@ -1,4 +1,18 @@
 
+// SALESFORCE SETUP
+var nforce = require('nforce');
+var salesforceApi = process.env.SALESFORCE_API || '35.0';
+var sfdcOrg = nforce.createConnection({
+	mode: 'single',
+	clientId: process.env.SALESFORCE_CONSUMER_KEY,
+	clientSecret: process.env.SALESFORCE_CONSUMER_SECRET,
+	redirectUri: '',
+	apiVersion: salesforceApi,  // optional, defaults to v24.0
+	environment: 'sandbox',  // optional, sandbox or production, production default
+	autorefresh: true
+});
+
+
 // GET 
 exports.getFacebookLeadGen = function (req, res) {
 	  // get verify token from facebook and send response accordingly
