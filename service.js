@@ -1,12 +1,15 @@
+
+// module dependencies
 var express = require('express');
-var app = express();
 var https = require('https');
+var mongoose = require('mongoose');
+var nforce = require('nforce');
+var app = express();
 
 // SALESFORCE SETUP
-var nforce = require('nforce');
 var salesforceApi = process.env.SALESFORCE_API || '35.0';
 var sfdcOrg = nforce.createConnection({
-	mode: 'multi',
+	mode: 'single',
 	clientId: process.env.SALESFORCE_CONSUMER_KEY,
 	clientSecret: process.env.SALESFORCE_CONSUMER_SECRET,
 	redirectUri: '',
@@ -14,12 +17,21 @@ var sfdcOrg = nforce.createConnection({
 	environment: 'sandbox',  // optional, sandbox or production, production default
 	autorefresh: true
 });
-var oauth;
+
+// Controllers (route handlers)
+var facebookLeadGenController = require('./controllers/facebookLeadGen');
 
 // BODY PARSER
 var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); 
+
+// MONGODB CONNECT
+mongoose.connect(process.env.MONGOLAB_URI);
+mongoose.connection.on('error', function() {
+  console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
+  process.exit(1);
+});
 
 // SERVE STATIC PAGES
 app.use('/facebook', express.static(__dirname + '/views')); 
@@ -30,14 +42,13 @@ app.get('/FacebookLeadGen', function (req, res) {
   if (req.param('hub.verify_token') == (process.env.VERIFY_TOKEN) ) {
   	res.send(req.param('hub.challenge'));
   } else {
-	res.send('Hello World!');
+	res.send('Invalid Verify Token');
   }
 });
 
 // POST: FacebookLeadGen
-app.post('/FacebookLeadGen', function (req, res) {
-  
-  console.log('LUCY DEBUG: Got a POST request');
+app.post('/FacebookLeadGen', function(req, res) {
+	  console.log('LUCY DEBUG: Got a POST request');
   console.log(req.body); 
 
   var object = req.body.object; 
@@ -62,8 +73,23 @@ app.post('/FacebookLeadGen', function (req, res) {
   }
 
   res.send('yay');
-
 }); 
+
+
+function getAndInsertLead(leadGenId) {
+	sfdcOrg.authenticate({ username: process.env.SALESFORCE_USERNAME, password: process.env.SALESFORCE_PASSWORD },
+        function(err, resp){
+		if(err) {
+		  console.log('SF Authentication Error: ' + err.message);
+		} else {
+		  console.log('SF Authentication Access Token: ' + resp.access_token);
+		  https.request({
+  			host: 'graph.facebook.com',
+  			path: '/' + leadGenId + '?access_token='+ process.env.FACEBOOK_PAGE_TOKEN 
+			}, insertLeadCallback).end();
+		}
+	});
+}
 
 
 var insertLeadCallback = function(response) {
@@ -94,7 +120,7 @@ var insertLeadCallback = function(response) {
     	}
     }
 
-	sfdcOrg.insert({ sobject: newLead, oauth: oauth }, function(err, resp){
+	sfdcOrg.insert({ sobject: newLead }, function(err, resp){
   		if (err) {
 	      	console.log(err);
 	    	if (err.statusCode == 401){
@@ -110,24 +136,11 @@ var insertLeadCallback = function(response) {
 	      	}
 	  	}
 	});
+
   });
 };
 
-function getAndInsertLead(leadGenId) {
-	sfdcOrg.authenticate({ username: process.env.SALESFORCE_USERNAME, password: process.env.SALESFORCE_PASSWORD },
-        function(err, resp){
-		if(err) {
-		  console.log('SF Authentication Error: ' + err.message);
-		} else {
-		  console.log('SF Authentication Access Token: ' + resp.access_token);
-		  oauth = resp;
-		  https.request({
-  			host: 'graph.facebook.com',
-  			path: '/' + leadGenId + '?access_token='+ process.env.FACEBOOK_PAGE_TOKEN 
-			}, insertLeadCallback).end();
-		}
-	});
-}
+
 app.get('/testing', function(req,res) {
 	console.log('HERE');
 	getAndInsertLead('1691930984420345');
@@ -157,3 +170,4 @@ function SFLead() {
 app.listen( process.env.PORT || 5000, function() {
   console.log('Node app is running on port', process.env.PORT);
 });
+
