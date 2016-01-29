@@ -6,12 +6,13 @@ var https = require('https');
 var nforce = require('nforce');
 var salesforceApi = process.env.SALESFORCE_API || '35.0';
 var sfdcOrg = nforce.createConnection({
-	mode: 'single',
+	mode: 'multi',
 	clientId: process.env.SALESFORCE_CONSUMER_KEY,
 	clientSecret: process.env.SALESFORCE_CONSUMER_SECRET,
 	redirectUri: '',
 	apiVersion: salesforceApi,  // optional, defaults to v24.0
-	environment: 'sandbox'  // optional, sandbox or production, production default
+	environment: 'sandbox',  // optional, sandbox or production, production default
+	autorefresh: true
 });
 var oauth;
 
@@ -56,6 +57,8 @@ app.post('/FacebookLeadGen', function (req, res) {
   	console.log('change.leadgenID: ' + req.body.entry[0].changes[i].value.leadgen_id);
   	console.log('change.formID: ' + req.body.entry[0].changes[i].value.form_id);
   	console.log('change.created_time: ' + req.body.entry[0].changes[i].value.created_time);
+
+  	getAndInsertLead(req.body.entry[0].changes[i].value.leadgen_id);
   }
 
   res.send('yay');
@@ -63,7 +66,7 @@ app.post('/FacebookLeadGen', function (req, res) {
 }); 
 
 
-var callback = function(response) {
+var insertLeadCallback = function(response) {
   var str = '';
   //another chunk of data has been recieved, so append it to `str`
   response.on('data', function (chunk) {
@@ -110,6 +113,34 @@ var callback = function(response) {
   });
 };
 
+function getAndInsertLead(leadGenId) {
+	sfdcOrg.authenticate({ username: process.env.SALESFORCE_USERNAME, password: process.env.SALESFORCE_PASSWORD },
+        function(err, resp){
+		if(err) {
+		  console.log('SF Authentication Error: ' + err.message);
+		} else {
+		  console.log('SF Authentication Access Token: ' + resp.access_token);
+		  oauth = resp;
+		  https.request({
+  			host: 'graph.facebook.com',
+  			path: '/' + leadGenId + '?access_token='+ process.env.FACEBOOK_PAGE_TOKEN 
+			}, insertLeadCallback).end();
+		}
+	});
+}
+app.get('/testing', function(req,res) {
+	console.log('HERE');
+
+
+	res.send('hello'); 
+});
+
+
+/*
+app.get('/SubscribeFacebookPage', function(req, res) {
+	res.render('/index'); 
+});*/
+
 /*
 function SFLead() {
 	this.setName = function(name) {
@@ -122,34 +153,6 @@ function SFLead() {
 		this.phone = phone; 
 	}
 }*/
-
-//
-app.get('/testing', function(req,res) {
-	console.log('HERE');
-	sfdcOrg.authenticate({ username: process.env.SALESFORCE_USERNAME, password: process.env.SALESFORCE_PASSWORD },
-        function(err, resp){
-		if(err) {
-		  console.log('SF Authentication Error: ' + err.message);
-		} else {
-		  console.log('SF Authentication Access Token: ' + resp.access_token);
-		  oauth = resp;
-		  var options = {
-  			host: 'graph.facebook.com',
-  			path: '/1691930984420345?access_token='+ process.env.FACEBOOK_PAGE_TOKEN 
-			};
-			https.request(options, callback).end();
-		}
-	});
-
-	res.send('hello'); 
-});
-
-
-/*
-app.get('/SubscribeFacebookPage', function(req, res) {
-	res.render('/index'); 
-});*/
-
 
 
 app.listen( process.env.PORT || 5000, function() {
