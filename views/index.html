@@ -30,6 +30,7 @@
     });
   }
 
+
   // Only works after `FB.init` is called
   function myFacebookLogin() {
     FB.login(function(response){
@@ -39,7 +40,7 @@
         fb_exchange_token: response.authResponse.accessToken,  client_id: '1671785316427265', client_secret: '900e0e7c8e6c46a2e0051aa080e94276' },
         
         function (response1) {
-          FB.api('/me/accounts?'+response1,
+          FB.api('/me/accounts?'+response1.access_token,
               function(response2) {
               console.log('Successfully retrieved pages', response2);
               var pages = response2.data;
