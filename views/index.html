@@ -44,16 +44,18 @@
               console.log('Successfully retrieved pages', response2);
               var pages = response2.data;
               var ul = document.getElementById('list');
+
               for (var i = 0, len = pages.length; i < len; i++) {
                 var page = pages[i];
                 var li = document.createElement('li');
                 var a = document.createElement('a');
                 a.href = "#";
                 a.onclick = subscribeApp.bind(this, page.id, page.access_token);
-                a.innerHTML = page.name;
+                a.innerHTML = page.name + ' access token: ' + page.access_token;
                 li.appendChild(a);
                 ul.appendChild(li);
               }
+
         }); 
 
       });
