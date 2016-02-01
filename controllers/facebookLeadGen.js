@@ -49,6 +49,7 @@ var insertLeadCallback = function(response) {
     		console.log('lead phone: ' + dataList[i].values[0]);
     		newLead.set('Phone', dataList[i].values[0]);
     	}
+      newLead.set('Acquisition_Lead_Source__c','Facebook Leads Ads'); // FOR TESTING PURPOSE ONLY FOR NOW
     }
 
 	sfdcOrg.insert({ sobject: newLead }, function(err, resp){
