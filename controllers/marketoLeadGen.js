@@ -20,6 +20,7 @@ var marketoCallback = function (response) {
   });
   //the whole response has been recieved
   response.on('end', function () {
+  	console.log(str);
 
 	https.request({
   			host: '615-KOO-288.mktorest.com',
@@ -38,7 +39,7 @@ var marketoCallback = function (response) {
 			}
 		}, function (res2) {
 			console.log('post success! ' + res2); 
-		});
+		}).end();
 
 
   }); 
@@ -73,7 +74,7 @@ var insertLeadCallback = function(response) {
 	https.request({
 			host: '615-KOO-288.mktorest.com',
 			path: '/identity/oauth/token?grant_type=client_credentials&client_id=' + process.env.MKT_CLIENT_ID + '&client_secret=' + process.env.MKT_CLIENT_SECRET
-		},	marketoCallback);
+		},	marketoCallback).end();
 
 	});
 }; 
