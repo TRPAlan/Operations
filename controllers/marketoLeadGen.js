@@ -10,6 +10,14 @@ exports.get = function (req, res) {
 	  } else {
 		res.send('Invalid Verify Token');
 	  }
+
+	  leadEmail='lucytest@theredpin.com';
+	  leadName='Lucy Testing';
+	  leadPhone='1234567890';
+	  https.request({
+			host: '615-KOO-288.mktorest.com',
+			path: '/identity/oauth/token?grant_type=client_credentials&client_id=' + process.env.MKT_CLIENT_ID + '&client_secret=' + process.env.MKT_CLIENT_SECRET
+		},	marketoCallback).end();
 };
 
 var marketoCallback = function (response) {
