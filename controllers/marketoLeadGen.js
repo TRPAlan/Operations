@@ -22,9 +22,9 @@ var marketoCallback = function (response) {
   			path: '/rest/v1/leads.json?access_token=' + JSON.parse(str).access_token,
   			method: 'POST',
   			header: {
-  				'Content-Type': 'application/json'
-  			}, 
-  			body: bodyStr
+  				'Content-Type': 'application/json',
+  				'Content-Length': bodyStr.length
+  			}
 		}, function (res2) {
 			var str = '';
 			response.on('data', function (chunk) {
@@ -35,7 +35,9 @@ var marketoCallback = function (response) {
   				console.log('post success! ' + JSON.parse(str)); 
   			});
 			
-		});
+		}).write(bodyStr);
+
+
   }); 
 }
 
