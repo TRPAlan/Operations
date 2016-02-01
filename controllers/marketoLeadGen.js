@@ -1,4 +1,5 @@
 var https = require('https');
+var unirest = require('unirest');
 
 var leadEmail, leadName, leadPhone; 
 
@@ -17,9 +18,21 @@ var marketoCallback = function (response) {
 
   	var bodyStr = '{"action": "createOrUpdate","lookupField": "email","input": [{"email": "' +  leadEmail +'","firstName": "' + leadName + '","phone": "' + leadPhone + '"}]}';
 
+  	unirest.post('https://615-KOO-288.mktorest.com/rest/v1/leads.json?access_token='+ JSON.parse(str).access_token)
+  	.header('Accept', 'application/json')
+  	.send({"action": "createOrUpdate", "lookupField": "email",
+  		"input": [{
+  			"email": "lucytest@theredpin.com",
+  			"firstName": "lucy testing",
+  			"phone": 123456
+  		}]})
+  	.end(function (response) {
+  		console.log(response.body);
+	});
+
 	https.request({
   			host: '615-KOO-288.mktorest.com',
-  			path: '/rest/v1/leads.json?access_token=' + JSON.parse(str).access_token,
+  			path: '' ,
   			method: 'POST',
   			header: {
   				'Content-Type': 'application/json',
