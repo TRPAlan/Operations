@@ -1,9 +1,8 @@
 exports.get = function (req, res) {
-	res.render('facebookRefreshToken', 
-		{appID: proccess.env.FACEBOOK_APP_ID, 
-		appSecret: process.env.FACEBOOK_APP_SECRET} ); 
-
-	var oldToken = req.body.tempToken; 
-
-	res.send('Success');
+	if (req.param('verify_token') == (process.env.VERIFY_TOKEN)) {
+		var newToken = req.param('new_page_token'); // store this variable in the db
+		res.send('SUCCESS');
+	} else {
+		res.send('FAILURE, wrong verify_token');
+	}
 };
