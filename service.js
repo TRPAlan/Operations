@@ -8,15 +8,12 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); 
 
-
-// SERVE STATIC PAGES
-app.use('/facebook', express.static(__dirname + '/views')); 
-
 // VIEWS DIRECTORY
 app.set('view engine', 'jade');
 
 // Controllers (route handlers)
 var facebookLeadGenController = require('./controllers/facebookLeadGen');
+var marketoLeadGenController = require('./controllers/marketoLeadGen');
 
 // MONGODB CONNECT
 mongoose.connect(process.env.MONGOLAB_URI);
@@ -31,6 +28,13 @@ app.get('/FacebookLeadGen', facebookLeadGenController.get);
 
 // POST: FacebookLeadGen
 app.post('/FacebookLeadGen', facebookLeadGenController.post); 
+
+// GET: FacebookLeadGen
+app.get('/MarketoLeadGen', MarketoLeadGenController.get);
+
+// POST: FacebookLeadGen
+app.post('/MarketoLeadGen', MarketoLeadGenController.post); 
+
 
 app.get('/testing', facebookLeadGenController.post); 
 
