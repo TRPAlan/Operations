@@ -36,7 +36,7 @@
       console.log('Successfully logged in, temp user access token: ', response.authResponse.accessToken);
 
       FB.api('/oauth/access_token', { grant_type: 'fb_exchange_token',
-        fb_exchange_token:response.authResponse.accessToken,  client_id: '1671785316427265', client_secret: '900e0e7c8e6c46a2e0051aa080e94276' },
+        fb_exchange_token: response.authResponse.accessToken,  client_id: '1671785316427265', client_secret: '900e0e7c8e6c46a2e0051aa080e94276' },
         
         function (response1) {
           FB.api('/me/accounts?'+response1,
