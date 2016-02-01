@@ -25,13 +25,13 @@ var marketoCallback = function (response) {
   			method: 'POST',
   			header: headers, 
   			json: {
-    			"action": "createOrUpdate",
-    			"lookupField": "email",
-    			"input": [
+    			action: "createOrUpdate",
+    			lookupField: "email",
+    			input: [
     				{
-    					"email": leadEmail,
-    					"firstName": leadName,
-    					"phone": leadPhone
+    					email: leadEmail,
+    					firstName: leadName,
+    					phone: leadPhone
     				}
     			]
 			}
