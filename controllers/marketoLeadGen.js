@@ -16,20 +16,22 @@ var marketoCallback = function (response) {
   	console.log (leadName);
   	console.log (leadPhone);
 
-  	var bodyStr = '{"action": "createOrUpdate","lookupField": "email","input": [{"email": "' +  leadEmail +'","firstName": "' + leadName + '","phone": "' + leadPhone + '"}]}';
-
   	unirest.post('https://615-KOO-288.mktorest.com/rest/v1/leads.json?access_token='+ JSON.parse(str).access_token)
   	.type('application/json')
   	.send({"action": "createOrUpdate", "lookupField": "email",
   		"input": [{
   			"email": leadEmail,
   			"firstName": leadName,
-  			"phone": leadPhone
+  			"phone": leadPhone,
+  			"leadSource": "Facebook Lead Ads"
   		}]})
   	.end(function (response) {
   		console.log(response.body);
 	});
 /*
+
+var bodyStr = '{"action": "createOrUpdate","lookupField": "email","input": [{"email": "' +  leadEmail +'","firstName": "' + leadName + '","phone": "' + leadPhone + '"}]}';
+
 	https.request({
   			host: '615-KOO-288.mktorest.com',
   			path: '' ,
@@ -118,14 +120,12 @@ exports.post = function (req, res) {
   var changes = req.body.entry[0].changes; 
 
   // log out general object properties 
-  console.log ('object:' + object);
   console.log ('LUCY entry[0]:' + req.body.entry[0]);
   console.log ('LUCY changes:' + req.body.entry[0].changes);
   console.log ('LUCY id:' + req.body.entry[0].id);
   console.log ('LUCY time :' + req.body.entry[0].time);
   console.log ('LUCY changes[0]:' + req.body.entry[0].changes[0]);
   console.log ('LUCY changes[0].field:' + req.body.entry[0].changes[0].field);
-
 
   for (var i=0; i< req.body.entry[0].changes.length; i++){
 		var leadGenId = req.body.entry[0].changes[i].value.leadgen_id; 
