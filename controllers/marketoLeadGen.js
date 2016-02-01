@@ -15,10 +15,15 @@ var marketoCallback = function (response) {
   	console.log (leadName);
   	console.log (leadPhone);
 
+  	var headers = {
+    	'Content-Type': 'application/json',
+	}; 
+
 	https.request({
   			host: '615-KOO-288.mktorest.com',
   			path: '/rest/v1/leads.json?access_token=' + JSON.parse(str).access_token,
   			method: 'POST',
+  			header: headers, 
   			json: {
     			"action": "createOrUpdate",
     			"lookupField": "email",
