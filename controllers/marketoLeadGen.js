@@ -1,5 +1,7 @@
 var https = require('https');
 
+var leadEmail, leadName, leadPhone; 
+
 // GET 
 exports.get = function (req, res) {
 	  // get verify token from facebook and send response accordingly
@@ -11,7 +13,7 @@ exports.get = function (req, res) {
 };
 
 var marketoCallback = function (response) {
-	var str = '';
+  var str = '';
   //another chunk of data has been recieved, so append it to `str`
   response.on('data', function (chunk) {
     str += chunk;
@@ -28,9 +30,9 @@ var marketoCallback = function (response) {
     			"lookupField": "email",
     			"input": [
     				{
-    					"email": email,
-    					"firstName": name,
-    					"phone": phone_number
+    					"email": leadEmail,
+    					"firstName": leadName,
+    					"phone": leadPhone
     				}
     			]
 			}
@@ -53,19 +55,18 @@ var insertLeadCallback = function(response) {
   response.on('end', function () {
     var dataList = JSON.parse(str).field_data;
 
-    var name, email, phone_number; 
     for (var i=0; i< dataList.length; i++){
     	if (dataList[i].name == 'full_name') {
     		console.log('lead name: ' + dataList[i].values[0]);
-    		name = dataList[i].values[0];
+    		leadName = dataList[i].values[0];
     	}
     	if (dataList[i].name == 'email') {
     		console.log('lead email: ' + dataList[i].values[0]);
-    		email = dataList[i].values[0];
+    		leadEmail = dataList[i].values[0];
     	}
     	if (dataList[i].name == 'phone_number') {
     		console.log('lead phone: ' + dataList[i].values[0]);
-    		phone_number = dataList[i].values[0];
+    		leadPhone = dataList[i].values[0];
     	}
 	}
 	
@@ -73,7 +74,7 @@ var insertLeadCallback = function(response) {
 			host: '615-KOO-288.mktorest.com',
 			path: '/identity/oauth/token?grant_type=client_credentials&client_id=' + process.env.MKT_CLIENT_ID + '&client_secret=' + process.env.MKT_CLIENT_SECRET
 		},	marketoCallback);
-	
+
 	});
 }; 
 
