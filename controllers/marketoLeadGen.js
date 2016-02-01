@@ -41,10 +41,16 @@ var marketoCallback = function (response) {
     			]
 			}
 		}, function (res2) {
-			console.log('post success! ' + JSON.parse(res2)); 
+			var str = '';
+			response.on('data', function (chunk) {
+    			str += chunk;
+  			});
+  			response.on('end', function () {
+
+  				console.log('post success! ' + JSON.parse(str)); 
+  			});
+			
 		}).end();
-
-
   }); 
 }
 
