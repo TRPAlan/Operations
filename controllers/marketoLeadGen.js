@@ -67,7 +67,7 @@ var insertLeadCallback = function(response) {
     				{
     					"email": email,
     					"firstName": name,
-    					"phone": phone
+    					"phone": phone_number
     				}
     			]
 			}
