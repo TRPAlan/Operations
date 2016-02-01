@@ -29,7 +29,7 @@ app.get('/FacebookLeadGen', facebookLeadGenController.get);
 app.post('/FacebookLeadGen', facebookLeadGenController.post); 
 
 // GET: FacebookRefreshToken
-app.get('/FacebookRefreshToken', facebookRefreshToken.get); 
+app.get('/FacebookRefreshToken', facebookRefreshTokenController.get); 
 
 app.get('/testing', facebookLeadGenController.postFacebookLeadGen);
 
