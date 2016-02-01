@@ -1,4 +1,3 @@
-
 // module dependencies
 var express = require('express');
 var mongoose = require('mongoose');
@@ -6,6 +5,7 @@ var app = express();
 
 // Controllers (route handlers)
 var facebookLeadGenController = require('./controllers/facebookLeadGen');
+var facebookRefreshTokenController = require('./controllers/facebookRefreshToken');
 
 // BODY PARSER
 var bodyParser = require('body-parser');
@@ -23,11 +23,13 @@ mongoose.connection.on('error', function() {
 app.use('/facebook', express.static(__dirname + '/views')); 
 
 // GET: FacebookLeadGen
-app.get('/FacebookLeadGen', facebookLeadGenController.getFacebookLeadGen);
+app.get('/FacebookLeadGen', facebookLeadGenController.get);
 
 // POST: FacebookLeadGen
-app.post('/FacebookLeadGen', facebookLeadGenController.postFacebookLeadGen); 
+app.post('/FacebookLeadGen', facebookLeadGenController.post); 
 
+// GET: FacebookRefreshToken
+app.get('/FacebookRefreshToken', facebookRefreshToken.get); 
 
 app.get('/testing', facebookLeadGenController.postFacebookLeadGen);
 

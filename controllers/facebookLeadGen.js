@@ -15,7 +15,7 @@ var sfdcOrg = nforce.createConnection({
 
 
 // GET 
-exports.getFacebookLeadGen = function (req, res) {
+exports.get = function (req, res) {
 	  // get verify token from facebook and send response accordingly
 	  if (req.param('hub.verify_token') == (process.env.VERIFY_TOKEN) ) {
 	  	res.send(req.param('hub.challenge'));
@@ -64,7 +64,7 @@ var insertLeadCallback = function(response) {
 }
 
 // POST 
-exports.postFacebookLeadGen = function (req, res) {
+exports.post = function (req, res) {
   
   console.log('LUCY DEBUG: Got a POST request');
 
@@ -105,4 +105,6 @@ exports.postFacebookLeadGen = function (req, res) {
 
 		}
 	});
+
+	res.send('postFacebookLeadGen SUCCESS');
 }; 

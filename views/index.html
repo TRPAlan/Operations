@@ -33,8 +33,7 @@
   // Only works after `FB.init` is called
   function myFacebookLogin() {
     FB.login(function(response){
-      console.log('Successfully logged in', response);
-
+      console.log('Successfully logged in, temp user access token: ', response.authResponse.accessToken);
       FB.api('/me/accounts', function(response) {
         console.log('Successfully retrieved pages', response);
         var pages = response.data;
@@ -50,7 +49,7 @@
           ul.appendChild(li);
         }
       });
-      
+
     }, {scope: 'manage_pages'});
   }
 </script>
