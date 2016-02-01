@@ -15,7 +15,7 @@ var marketoCallback = function (response) {
   	console.log (leadName);
   	console.log (leadPhone);
 
-  	var bodyStr = '{"action": "createOrUpdate","lookupField": "email","input": [{email: ' +  leadEmail +',firstName: ' + leadName + ',phone: ' + leadPhone + '}]}';
+  	var bodyStr = '{"action": "createOrUpdate","lookupField": "email","input": [{"email": "' +  leadEmail +'","firstName": "' + leadName + '","phone": "' + leadPhone + '"}]}';
 
 	https.request({
   			host: '615-KOO-288.mktorest.com',
