@@ -45,7 +45,7 @@ var marketoCallback = function (response) {
   				console.log('post success! ' + JSON.parse(str)); 
   			});
 			
-		}).end();
+		});
   }); 
 }
 
