@@ -57,7 +57,7 @@ var insertLeadCallback = function(response) {
 	};*/
 
     	var options = {
-  			host: '615-KOO-288.mktorest.com/rest',
+  			host: '615-KOO-288.mktorest.com',
   			path: '/rest/v1/leads.json',
   			method: 'POST',
   			json: {
