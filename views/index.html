@@ -34,20 +34,32 @@
   function myFacebookLogin() {
     FB.login(function(response){
       console.log('Successfully logged in, temp user access token: ', response.authResponse.accessToken);
-      FB.api('/me/accounts', function(response) {
-        console.log('Successfully retrieved pages', response);
-        var pages = response.data;
-        var ul = document.getElementById('list');
-        for (var i = 0, len = pages.length; i < len; i++) {
-          var page = pages[i];
-          var li = document.createElement('li');
-          var a = document.createElement('a');
-          a.href = "#";
-          a.onclick = subscribeApp.bind(this, page.id, page.access_token);
-          a.innerHTML = page.name;
-          li.appendChild(a);
-          ul.appendChild(li);
-        }
+
+      FB.api('/oauth/access_token', 'get', {fb_exchange_token:response.authResponse.accessToken, 
+            client_id: '1671785316427265', client_secret: '900e0e7c8e6c46a2e0051aa080e94276' },
+        
+        function (response1) {
+          FB.api('/me/accounts?'+response1, 'get',
+              function(response2) {
+              console.log('Successfully retrieved pages', response2);
+              var pages = response2.data;
+              var ul = document.getElementById('list');
+              for (var i = 0, len = pages.length; i < len; i++) {
+                var page = pages[i];
+                var li = document.createElement('li');
+                var a = document.createElement('a');
+                a.href = "#";
+                a.onclick = subscribeApp.bind(this, page.id, page.access_token);
+                a.innerHTML = page.name;
+                li.appendChild(a);
+                ul.appendChild(li);
+              }
+        }); 
+
+      });
+
+
+
       });
 
     }, {scope: 'manage_pages'});
