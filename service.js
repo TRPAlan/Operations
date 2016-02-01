@@ -30,10 +30,10 @@ app.get('/FacebookLeadGen', facebookLeadGenController.get);
 app.post('/FacebookLeadGen', facebookLeadGenController.post); 
 
 // GET: FacebookLeadGen
-app.get('/MarketoLeadGen', MarketoLeadGenController.get);
+app.get('/MarketoLeadGen', marketoLeadGenController.get);
 
 // POST: FacebookLeadGen
-app.post('/MarketoLeadGen', MarketoLeadGenController.post); 
+app.post('/MarketoLeadGen', marketoLeadGenController.post); 
 
 
 app.get('/testing', facebookLeadGenController.post); 
