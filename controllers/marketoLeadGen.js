@@ -2,24 +2,6 @@ var https = require('https');
 
 var leadEmail, leadName, leadPhone; 
 
-// GET 
-exports.get = function (req, res) {
-	  // get verify token from facebook and send response accordingly
-	  if (req.param('hub.verify_token') == (process.env.VERIFY_TOKEN) ) {
-	  	res.send(req.param('hub.challenge'));
-	  } else {
-		res.send('Invalid Verify Token');
-	  }
-
-	  leadEmail='lucytest@theredpin.com';
-	  leadName='Lucy Testing';
-	  leadPhone='1234567890';
-	  https.request({
-			host: '615-KOO-288.mktorest.com',
-			path: '/identity/oauth/token?grant_type=client_credentials&client_id=' + process.env.MKT_CLIENT_ID + '&client_secret=' + process.env.MKT_CLIENT_SECRET
-		},	marketoCallback).end();
-};
-
 var marketoCallback = function (response) {
   var str = '';
   //another chunk of data has been recieved, so append it to `str`
@@ -95,6 +77,27 @@ var insertLeadCallback = function(response) {
 
 	});
 }; 
+
+
+// GET 
+exports.get = function (req, res) {
+	  // get verify token from facebook and send response accordingly
+	  if (req.param('hub.verify_token') == (process.env.VERIFY_TOKEN) ) {
+	  	res.send(req.param('hub.challenge'));
+	  } else {
+
+	  	leadEmail='lucytest@theredpin.com';
+	  leadName='Lucy Testing';
+	  leadPhone='1234567890';
+	  https.request({
+			host: '615-KOO-288.mktorest.com',
+			path: '/identity/oauth/token?grant_type=client_credentials&client_id=' + process.env.MKT_CLIENT_ID + '&client_secret=' + process.env.MKT_CLIENT_SECRET
+		},	marketoCallback).end();
+
+		res.send('Invalid Verify Token');
+	  }
+};
+
 
 // POST 
 exports.post = function (req, res) {
