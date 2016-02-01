@@ -24,7 +24,7 @@ var marketoCallback = function (response) {
   		"input": [{
   			"email": "lucytest@theredpin.com",
   			"firstName": "lucy testing",
-  			"phone": 123456
+  			"phone": "123456"
   		}]})
   	.end(function (response) {
   		console.log(response.body);
