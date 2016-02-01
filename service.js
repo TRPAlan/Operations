@@ -5,7 +5,6 @@ var app = express();
 
 // Controllers (route handlers)
 var facebookLeadGenController = require('./controllers/facebookLeadGen');
-//var facebookRefreshTokenController = require('./controllers/facebookRefreshToken');
 
 // BODY PARSER
 var bodyParser = require('body-parser');
@@ -28,10 +27,7 @@ app.get('/FacebookLeadGen', facebookLeadGenController.get);
 // POST: FacebookLeadGen
 app.post('/FacebookLeadGen', facebookLeadGenController.post); 
 
-// GET: FacebookRefreshToken
-//app.get('/FacebookRefreshToken', facebookRefreshTokenController.get); 
-
-app.get('/testing', facebookLeadGenController.postFacebookLeadGen);
+app.get('/testing', facebookLeadGenController.post);
 
 
 /*
