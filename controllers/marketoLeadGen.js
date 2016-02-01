@@ -24,12 +24,12 @@ var marketoCallback = function (response) {
   		"input": [{
   			"email": leadEmail,
   			"firstName": leadName,
-  			"phone": "123456"
+  			"phone": leadPhone
   		}]})
   	.end(function (response) {
   		console.log(response.body);
 	});
-
+/*
 	https.request({
   			host: '615-KOO-288.mktorest.com',
   			path: '' ,
@@ -48,7 +48,7 @@ var marketoCallback = function (response) {
   				console.log('post success! ' + JSON.parse(str)); 
   			});
 			
-		}).write(bodyStr);
+		}).write(bodyStr);*/
 
 
   }); 
@@ -96,7 +96,7 @@ exports.get = function (req, res) {
 	  	res.send(req.param('hub.challenge'));
 	  } else {
 
-	  	leadEmail='lucytest@theredpin.com';
+	  leadEmail='lucytest@theredpin.com';
 	  leadName='Lucy Testing';
 	  leadPhone='1234567890';
 	  https.request({
