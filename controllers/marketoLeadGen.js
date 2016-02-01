@@ -1,5 +1,4 @@
 var https = require('https');
-var http = require('http');
 
 // GET 
 exports.get = function (req, res) {
@@ -10,6 +9,38 @@ exports.get = function (req, res) {
 		res.send('Invalid Verify Token');
 	  }
 };
+
+var marketoCallback = function (response) {
+	var str = '';
+  //another chunk of data has been recieved, so append it to `str`
+  response.on('data', function (chunk) {
+    str += chunk;
+  });
+  //the whole response has been recieved
+  response.on('end', function () {
+
+	https.request({
+  			host: '615-KOO-288.mktorest.com',
+  			path: '/rest/v1/leads.json?access_token=' + JSON.parse(str).access_token,
+  			method: 'POST',
+  			json: {
+    			"action": "createOrUpdate",
+    			"lookupField": "email",
+    			"input": [
+    				{
+    					"email": email,
+    					"firstName": name,
+    					"phone": phone_number
+    				}
+    			]
+			}
+		}, function (res2) {
+			console.log('post success! ' + res2); 
+		});
+
+
+  }); 
+}
 
 
 var insertLeadCallback = function(response) {
@@ -36,47 +67,13 @@ var insertLeadCallback = function(response) {
     		console.log('lead phone: ' + dataList[i].values[0]);
     		phone_number = dataList[i].values[0];
     	}
-    }
-/*
-    var bodyString = JSON.stringify({
-    	action: 'createOrUpdate',
-    	lookupField: 'email',
-    	input: [
-    		{
-    			email: email,
-    			firstName: name,
-    			phone: phone,
-    		}
-    	]
-	});
-    console.log(bodyString);
-
-    var headers = {
-    	'Content-Type': 'application/json',
-    	'Content-Length': bodyString.length
-	};*/
-
-    	var options = {
-  			host: '615-KOO-288.mktorest.com',
-  			path: '/rest/v1/leads.json',
-  			method: 'POST',
-  			json: {
-    			"action": "createOrUpdate",
-    			"lookupField": "email",
-    			"input": [
-    				{
-    					"email": email,
-    					"firstName": name,
-    					"phone": phone_number
-    				}
-    			]
-			}
-		};
+	}
 	
-		http.request(options, function (res) {
-			console.log('post success!'); 
-		});
-
+	https.request({
+			host: '615-KOO-288.mktorest.com',
+			path: '/identity/oauth/token?grant_type=client_credentials&client_id=' + process.env.MKT_CLIENT_ID + '&client_secret=' + process.env.MKT_CLIENT_SECRET
+		},	marketoCallback);
+	
 	});
 }; 
 
@@ -114,3 +111,22 @@ exports.post = function (req, res) {
 
 	res.send('postFacebookLeadGen SUCCESS');
 }
+
+/*
+    var bodyString = JSON.stringify({
+    	action: 'createOrUpdate',
+    	lookupField: 'email',
+    	input: [
+    		{
+    			email: email,
+    			firstName: name,
+    			phone: phone,
+    		}
+    	]
+	});
+    console.log(bodyString);
+
+    var headers = {
+    	'Content-Type': 'application/json',
+    	'Content-Length': bodyString.length
+	};*/
