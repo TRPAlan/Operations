@@ -12,9 +12,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // SERVE STATIC PAGES
 app.use('/facebook', express.static(__dirname + '/views')); 
 
-/*
+// VIEWS DIRECTORY
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
+
 // Controllers (route handlers)
 var facebookLeadGenController = require('./controllers/facebookLeadGen');
+var facebookRefreshTokenController = require('./controllers/facebookRefreshToken');
 
 // MONGODB CONNECT
 mongoose.connect(process.env.MONGOLAB_URI);
@@ -30,7 +34,9 @@ app.get('/FacebookLeadGen', facebookLeadGenController.get);
 // POST: FacebookLeadGen
 app.post('/FacebookLeadGen', facebookLeadGenController.post); 
 
-app.get('/testing', facebookLeadGenController.post); */
+app.get('/FacebookRefreshToken', facebookRefreshTokenController.get);
+
+app.get('/testing', facebookLeadGenController.post); 
 
 
 /*

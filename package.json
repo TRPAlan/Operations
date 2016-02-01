@@ -5,6 +5,7 @@
   "dependencies": {
     "body-parser": "^1.14.2",
     "express": "^4.13.4",
+    "jade": "^1.11.0",
     "kerberos": "0.0.18",
     "mongodb": "^2.1.4",
     "mongoose": "^4.3.7",
