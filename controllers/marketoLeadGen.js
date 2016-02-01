@@ -21,6 +21,9 @@ var marketoCallback = function (response) {
   //the whole response has been recieved
   response.on('end', function () {
   	console.log(str);
+  	console.log (leadEmail);
+  	console.log (leadName);
+  	console.log (leadPhone);
 
 	https.request({
   			host: '615-KOO-288.mktorest.com',
@@ -38,7 +41,7 @@ var marketoCallback = function (response) {
     			]
 			}
 		}, function (res2) {
-			console.log('post success! ' + res2); 
+			console.log('post success! ' + JSON.parse(res2)); 
 		}).end();
 
 
