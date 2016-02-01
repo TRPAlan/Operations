@@ -22,8 +22,8 @@ var marketoCallback = function (response) {
   	.type('application/json')
   	.send({"action": "createOrUpdate", "lookupField": "email",
   		"input": [{
-  			"email": "lucytest@theredpin.com",
-  			"firstName": "lucy testing",
+  			"email": leadEmail,
+  			"firstName": leadName,
   			"phone": "123456"
   		}]})
   	.end(function (response) {
