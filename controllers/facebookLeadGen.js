@@ -1,4 +1,5 @@
 var https = require('https');
+var unirest = require('unirest');
 
 // SALESFORCE SETUP
 var nforce = require('nforce');
@@ -49,7 +50,7 @@ var insertLeadCallback = function(response) {
     		console.log('lead phone: ' + dataList[i].values[0]);
     		newLead.set('Phone', dataList[i].values[0]);
     	}
-      newLead.set('Acquisition_Lead_Source__c','Facebook Leads Ads'); // FOR TESTING PURPOSE ONLY FOR NOW
+      newLead.set('Acquisition_Lead_Source__c','Facebook Lead Ads'); // FOR TESTING PURPOSE ONLY FOR NOW
     }
 
 	sfdcOrg.insert({ sobject: newLead }, function(err, resp){
@@ -98,10 +99,45 @@ exports.post = function (req, res) {
   			console.log('change.formID: ' + req.body.entry[0].changes[i].value.form_id);
   			console.log('change.created_time: ' + req.body.entry[0].changes[i].value.created_time);
 
+/*
 		  		https.request({
   					host: 'graph.facebook.com',
   					path: '/' + leadGenId + '?access_token='+ process.env.FACEBOOK_PAGE_TOKEN 
-				}, insertLeadCallback).end();
+				}, insertLeadCallback).end();*/
+
+          unirest.get('https://graph.facebook.com/' + leadGenId + '?access_token='+ process.env.FACEBOOK_PAGE_TOKEN)
+          .end(function(response) {
+                var dataList = JSON.parse(response).field_data;
+
+                var newLead = nforce.createSObject('Lead');
+                for (var i=0; i< dataList.length; i++){
+                  if (dataList[i].name == 'full_name') {
+                    console.log('lead name: ' + dataList[i].values[0]);
+                    newLead.set('LastName', dataList[i].values[0]);
+                  }
+                  if (dataList[i].name == 'email') {
+                    console.log('lead email: ' + dataList[i].values[0]);
+                    newLead.set('Email', dataList[i].values[0]);
+                  }
+                  if (dataList[i].name == 'phone_number') {
+                    console.log('lead phone: ' + dataList[i].values[0]);
+                    newLead.set('Phone', dataList[i].values[0]);
+                  }
+                  newLead.set('Acquisition_Lead_Source__c','Facebook Lead Ads'); // FOR TESTING PURPOSE ONLY FOR NOW
+                }
+
+              sfdcOrg.insert({ sobject: newLead }, function(err, resp){
+                  if (err) {
+                      console.log('INSERT ERROR: ' + err.message);
+                  } else {
+                    if (resp.success == true) {
+                    console.log('INSERT SUCCESS');
+                      }
+                  }
+                });
+
+          });
+
 			}
 
 		}
