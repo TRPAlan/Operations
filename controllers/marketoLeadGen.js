@@ -12,7 +12,9 @@ var marketoCallback = function (response, formId, name, email, phone) {
   	console.log(str);
     var firstName = name.split(' ').slice(0, -1).join(' ');
     var lastName = name.split(' ').slice(-1).join(' ');
+    console.log ('INSERT LEAD: ' + name + ' ' + email + ' ' + phone + ' ' + formId); 
 
+    /*
   	unirest.post('https://615-KOO-288.mktorest.com/rest/v1/leads.json?access_token='+ JSON.parse(str).access_token)
   	.type('application/json')
   	.send({"action": "createOrUpdate", "lookupField": "email",
@@ -26,31 +28,7 @@ var marketoCallback = function (response, formId, name, email, phone) {
   		}]})
   	.end(function (response) {
   		console.log(response.body);
-	});
-/*
-
-var bodyStr = '{"action": "createOrUpdate","lookupField": "email","input": [{"email": "' +  leadEmail +'","firstName": "' + leadName + '","phone": "' + leadPhone + '"}]}';
-
-	https.request({
-  			host: '615-KOO-288.mktorest.com',
-  			path: '' ,
-  			method: 'POST',
-  			header: {
-  				'Content-Type': 'application/json',
-  				'Content-Length': bodyStr.length
-  			}
-		}, function (res2) {
-			var str = '';
-			response.on('data', function (chunk) {
-    			str += chunk;
-  			});
-  			response.on('end', function () {
-
-  				console.log('post success! ' + JSON.parse(str)); 
-  			});
-			
-		}).write(bodyStr);*/
-
+	}); */
 
   }); 
 }
