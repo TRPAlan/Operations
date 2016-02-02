@@ -1,7 +1,7 @@
 var https = require('https');
 var unirest = require('unirest');
 
-var leadEmail, leadName, leadPhone; 
+var leadEmail, leadName, leadPhone, leadFormId; 
 
 var marketoCallback = function (response) {
   var str = '';
@@ -23,7 +23,8 @@ var marketoCallback = function (response) {
   			"email": leadEmail,
   			"firstName": leadName,
   			"phone": leadPhone,
-  			"leadSource": "Facebook Lead Ads"
+  			"leadSource": "Facebook Lead Ads",
+        "Facebook_Form_Id__c" : leadFormId // LEAD FORM ID
   		}]})
   	.end(function (response) {
   		console.log(response.body);
@@ -133,6 +134,8 @@ exports.post = function (req, res) {
   		console.log('change.field: ' + req.body.entry[0].changes[i].field);
   		console.log('change.leadgenID: ' + req.body.entry[0].changes[i].value.leadgen_id);
   		console.log('change.formID: ' + req.body.entry[0].changes[i].value.form_id);
+      leadFormId = req.body.entry[0].changes[i].value.form_id; 
+
   		console.log('change.created_time: ' + req.body.entry[0].changes[i].value.created_time);
 
 			https.request({
