@@ -93,12 +93,6 @@ exports.post = function (req, res) {
   			console.log('change.formID: ' + req.body.entry[0].changes[i].value.form_id);
   			console.log('change.created_time: ' + req.body.entry[0].changes[i].value.created_time);
 
-
-		  	/*	https.request({
-  					host: 'graph.facebook.com',
-  					path: '/' + leadGenId + '?access_token='+ process.env.FACEBOOK_PAGE_TOKEN 
-				}, insertLeadCallback).end();*/
-
         unirest.get('https://graph.facebook.com/' + leadGenId + '?access_token='+ process.env.FACEBOOK_PAGE_TOKEN)
         .end(insertLeadCallback);
 
