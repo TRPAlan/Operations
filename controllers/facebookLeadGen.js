@@ -27,43 +27,37 @@ exports.get = function (req, res) {
 
 
 var insertLeadCallback = function(response) {
-  var str = '';
-  //another chunk of data has been recieved, so append it to `str`
-  response.on('data', function (chunk) {
-    str += chunk;
-  });
-  //the whole response has been recieved
-  response.on('end', function () {
-    var dataList = JSON.parse(str).field_data;
+  var dataList = JSON.parse(response.body).field_data;
 
-    var newLead = nforce.createSObject('Lead');
-    for (var i=0; i< dataList.length; i++){
-    	if (dataList[i].name == 'full_name') {
-    		console.log('lead name: ' + dataList[i].values[0]);
-    		newLead.set('LastName', dataList[i].values[0]);
-    	}
-    	if (dataList[i].name == 'email') {
-    		console.log('lead email: ' + dataList[i].values[0]);
-    		newLead.set('Email', dataList[i].values[0]);
-    	}
-    	if (dataList[i].name == 'phone_number') {
-    		console.log('lead phone: ' + dataList[i].values[0]);
-    		newLead.set('Phone', dataList[i].values[0]);
-    	}
-      newLead.set('Acquisition_Lead_Source__c','Facebook Lead Ads'); // FOR TESTING PURPOSE ONLY FOR NOW
+  var newLead = nforce.createSObject('Lead');
+  for (var i=0; i< dataList.length; i++){
+    if (dataList[i].name == 'full_name') {
+      console.log('lead name: ' + dataList[i].values[0]);
+      newLead.set('LastName', dataList[i].values[0]);
     }
+    if (dataList[i].name == 'email') {
+      console.log('lead email: ' + dataList[i].values[0]);
+      newLead.set('Email', dataList[i].values[0]);
+    }
+    if (dataList[i].name == 'phone_number') {
+      console.log('lead phone: ' + dataList[i].values[0]);
+      newLead.set('Phone', dataList[i].values[0]);
+    }
+    newLead.set('Acquisition_Lead_Source__c','Facebook Lead Ads'); // FOR TESTING PURPOSE ONLY FOR NOW
+  }
 
-	sfdcOrg.insert({ sobject: newLead }, function(err, resp){
-  		if (err) {
-	      	console.log('INSERT ERROR: ' + err.message);
-	    } else {
-	    	if (resp.success == true) {
-				console.log('INSERT SUCCESS');
-	      	}
-	  	}
-	  });
-	});
-}
+  sfdcOrg.insert({ sobject: newLead }, function(err, resp){
+      if (err) {
+          console.log('INSERT ERROR: ' + err.message);
+      } else {
+        if (resp.success == true) {
+        console.log('INSERT SUCCESS');
+          }
+      }
+    });
+
+};
+
 
 // POST 
 exports.post = function (req, res) {
@@ -106,37 +100,7 @@ exports.post = function (req, res) {
 				}, insertLeadCallback).end();*/
 
           unirest.get('https://graph.facebook.com/' + leadGenId + '?access_token='+ process.env.FACEBOOK_PAGE_TOKEN)
-          .end(function(response) {
-                var dataList = JSON.parse(response.body).field_data;
-
-                var newLead = nforce.createSObject('Lead');
-                for (var i=0; i< dataList.length; i++){
-                  if (dataList[i].name == 'full_name') {
-                    console.log('lead name: ' + dataList[i].values[0]);
-                    newLead.set('LastName', dataList[i].values[0]);
-                  }
-                  if (dataList[i].name == 'email') {
-                    console.log('lead email: ' + dataList[i].values[0]);
-                    newLead.set('Email', dataList[i].values[0]);
-                  }
-                  if (dataList[i].name == 'phone_number') {
-                    console.log('lead phone: ' + dataList[i].values[0]);
-                    newLead.set('Phone', dataList[i].values[0]);
-                  }
-                  newLead.set('Acquisition_Lead_Source__c','Facebook Lead Ads'); // FOR TESTING PURPOSE ONLY FOR NOW
-                }
-
-              sfdcOrg.insert({ sobject: newLead }, function(err, resp){
-                  if (err) {
-                      console.log('INSERT ERROR: ' + err.message);
-                  } else {
-                    if (resp.success == true) {
-                    console.log('INSERT SUCCESS');
-                      }
-                  }
-                });
-
-          });
+          .end(insertLeadCallback);
 
 			}
 
