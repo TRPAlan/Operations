@@ -15,13 +15,16 @@ var marketoCallback = function (response) {
   	console.log (leadEmail);
   	console.log (leadName);
   	console.log (leadPhone);
+    var firstName = leadName.split(' ').slice(0, -1).join(' ');
+    var lastName = leadName.split(' ').slice(-1).join(' ');
 
   	unirest.post('https://615-KOO-288.mktorest.com/rest/v1/leads.json?access_token='+ JSON.parse(str).access_token)
   	.type('application/json')
   	.send({"action": "createOrUpdate", "lookupField": "email",
   		"input": [{
   			"email": leadEmail,
-  			"firstName": leadName,
+  			"firstName": firstName,
+        "lastName": lastName,
   			"phone": leadPhone,
   			"leadSource": "Facebook Lead Ads",
         "Facebook_Form_Id__c" : leadFormId // LEAD FORM ID
@@ -98,16 +101,7 @@ exports.get = function (req, res) {
 	  if (req.param('hub.verify_token') == (process.env.VERIFY_TOKEN) ) {
 	  	res.send(req.param('hub.challenge'));
 	  } else {
-
-	  leadEmail='lucytest@theredpin.com';
-	  leadName='Lucy Testing';
-	  leadPhone='1234567890';
-	  https.request({
-			host: '615-KOO-288.mktorest.com',
-			path: '/identity/oauth/token?grant_type=client_credentials&client_id=' + process.env.MKT_CLIENT_ID + '&client_secret=' + process.env.MKT_CLIENT_SECRET
-		},	marketoCallback).end();
-
-		res.send('Invalid Verify Token');
+      res.send('Invalid Verify Token');
 	  }
 };
 
