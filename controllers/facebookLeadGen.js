@@ -107,7 +107,7 @@ exports.post = function (req, res) {
 
           unirest.get('https://graph.facebook.com/' + leadGenId + '?access_token='+ process.env.FACEBOOK_PAGE_TOKEN)
           .end(function(response) {
-                var dataList = JSON.parse(response).field_data;
+                var dataList = response.field_data;
 
                 var newLead = nforce.createSObject('Lead');
                 for (var i=0; i< dataList.length; i++){
