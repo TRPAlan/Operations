@@ -95,7 +95,6 @@ exports.post = function (req, res) {
 		// log out information related to lead
   		console.log('change.leadgenID: ' + req.body.entry[0].changes[i].value.leadgen_id);
   		console.log('change.formID: ' + req.body.entry[0].changes[i].value.form_id);
-      var leadFormId = req.body.entry[0].changes[i].value.form_id; 
 
   		console.log('change.created_time: ' + req.body.entry[0].changes[i].value.created_time);
 
@@ -103,7 +102,7 @@ exports.post = function (req, res) {
   				host: 'graph.facebook.com',
   				path: '/' + leadGenId + '?access_token='+ process.env.FACEBOOK_PAGE_TOKEN 
 			}, function(response) {
-        insertLeadCallback(response, leadFormId);
+        insertLeadCallback(response, req.body.entry[0].changes[i].value.form_id);
       }).end();
   	}
 
