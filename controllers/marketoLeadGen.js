@@ -59,13 +59,15 @@ var insertLeadCallback = function(response, formId) {
     		phone = dataList[i].values[0];
     	}
 	}
+
+  var callback = function (response) {
+    marketoCallback(response, formId, name, phone, email);
+  };
 	
 	https.request({
 			host: '615-KOO-288.mktorest.com',
 			path: '/identity/oauth/token?grant_type=client_credentials&client_id=' + process.env.MKT_CLIENT_ID + '&client_secret=' + process.env.MKT_CLIENT_SECRET
-		}, function (response) {
-      marketoCallback(response, formId, name, phone, email);
-    }).end();
+		}, callback).end();
 
 	});
 }; 
@@ -98,12 +100,15 @@ exports.post = function (req, res) {
 
   		console.log('change.created_time: ' + req.body.entry[0].changes[i].value.created_time);
 
+      var callback = function (response) {
+        insertLeadCallback(response, req.body.entry[0].changes[i].value.form_id);
+      }; 
+
 			https.request({
   				host: 'graph.facebook.com',
   				path: '/' + leadGenId + '?access_token='+ process.env.FACEBOOK_PAGE_TOKEN 
-			}, function(response) {
-        insertLeadCallback(response, req.body.entry[0].changes[i].value.form_id);
-      }).end();
+			}, callback).end();
+
   	}
 
 	res.send('postFacebookLeadGen SUCCESS');
