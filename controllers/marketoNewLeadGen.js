@@ -1,4 +1,3 @@
-var https = require('https');
 var unirest = require('unirest');
 var async = require('async');
 
@@ -33,46 +32,6 @@ var marketoCallback = function (response, formId, name, email, phone) {
 
   }); 
 }
-
-
-var insertLeadCallback = function(response, formId) {
-  var str = '';
-  //another chunk of data has been recieved, so append it to `str`
-  response.on('data', function (chunk) {
-    str += chunk;
-  });
-  //the whole response has been recieved
-  response.on('end', function () {
-    var dataList = JSON.parse(str).field_data;
-    var name, email, phone; 
-
-    for (var i=0; i< dataList.length; i++){
-      if (dataList[i].name == 'full_name') {
-        console.log('lead name: ' + dataList[i].values[0]);
-        name = dataList[i].values[0];
-      }
-      if (dataList[i].name == 'email') {
-        console.log('lead email: ' + dataList[i].values[0]);
-        email = dataList[i].values[0];
-      }
-      if (dataList[i].name == 'phone_number') {
-        console.log('lead phone: ' + dataList[i].values[0]);
-        phone = dataList[i].values[0];
-      }
-    }
-
-  var callback = function (response) {
-    marketoCallback(response, formId, name, phone, email);
-  };
-  
-  https.request({
-      host: '615-KOO-288.mktorest.com',
-      path: '/identity/oauth/token?grant_type=client_credentials&client_id=' + process.env.MKT_CLIENT_ID + '&client_secret=' + process.env.MKT_CLIENT_SECRET
-    }, callback).end();
-
-  });
-}; 
-
 
 // GET 
 exports.get = function (req, res) {
@@ -136,16 +95,26 @@ var chainedRequests = function (leadGenId, formId) {
       });
     },
 
+    // get marketo access token 
     function(name, email, phone, callback) {
       unirest.get('https://615-KOO-288.mktorest.com/identity/oauth/token?grant_type=client_credentials&client_id=' + process.env.MKT_CLIENT_ID + '&client_secret=' + process.env.MKT_CLIENT_SECRET)
       .end(function (response) {
+        callback(null, name, email, phone, response.body.access_token);
+      });
+    },
+
+    // insert lead into marketo
+    function (name, email, phone, token, callback) {
         var firstName = name.split(' ').slice(0, -1).join(' ');
         var lastName = name.split(' ').slice(-1).join(' ');
-        console.log('mkt access token:' + response.body.access_token); 
-        console.log ('INSERT LEAD: ' + name + ' ' + email + ' ' + phone + ' ' + formId); 
-
-      });
-
+        if (phone == null) {
+          console.log ('INSERT LEAD no phone: ' + name + ' ' + email + ' ' + phone + ' ' + formId); 
+        } else {
+          console.log ('INSERT LEAD with phone: ' + name + ' ' + email + ' ' + phone + ' ' + formId); 
+        }
+        
+        console.log('ACESS_TOKEN:' + token);
+        
     }
 
   ]);
