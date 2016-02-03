@@ -35,8 +35,8 @@ app.get('/MarketoLeadGen', marketoLeadGenController.get);
 // POST: FacebookLeadGen
 app.post('/MarketoLeadGen', marketoLeadGenController.post); 
 
-
-app.get('/testing', facebookLeadGenController.post); 
+var marketoNewLeadGenController = require('./controllers/marketoNewLeadGen');
+app.get('/testing', marketoNewLeadGen.post); 
 
 
 /*
