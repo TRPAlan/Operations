@@ -100,7 +100,7 @@ var chainedRequests = function (leadGenId, formId) {
           .type('application/json')
           .send(inputJson)
           .end(function (response) {
-            console.log('MKT Upsert Response:' + response.body);
+            console.log(response.body);
           }); 
     }
 
