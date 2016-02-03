@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "service.js",
   "dependencies": {
+    "async": "^1.5.2",
     "body-parser": "^1.14.2",
     "express": "^4.13.4",
     "jade": "^1.11.0",
