@@ -15,20 +15,7 @@ var marketoCallback = function (response, formId, name, email, phone) {
     console.log ('INSERT LEAD: ' + name + ' ' + email + ' ' + phone + ' ' + formId); 
 
     /*
-    unirest.post('https://615-KOO-288.mktorest.com/rest/v1/leads.json?access_token='+ JSON.parse(str).access_token)
-    .type('application/json')
-    .send({"action": "createOrUpdate", "lookupField": "email",
-      "input": [{
-        "email": email,
-        "firstName": firstName,
-        "lastName": lastName,
-        "phone": phone,
-        "leadSource": "Facebook Lead Ads",
-        "Facebook_Form_Id__c" : formId // LEAD FORM ID
-      }]})
-    .end(function (response) {
-      console.log(response.body);
-  }); */
+*/
 
   }); 
 }
@@ -107,14 +94,37 @@ var chainedRequests = function (leadGenId, formId) {
     function (name, email, phone, token, callback) {
         var firstName = name.split(' ').slice(0, -1).join(' ');
         var lastName = name.split(' ').slice(-1).join(' ');
+        
+        var inputJson; 
         if (phone == null) {
-          console.log ('INSERT LEAD no phone: ' + name + ' ' + email + ' ' + phone + ' ' + formId); 
+          inputJson = {"action": "createOrUpdate", "lookupField": "email",
+            "input": [{
+              "email": email,
+              "firstName": firstName,
+              "lastName": lastName,
+              "leadSource": "Facebook Lead Ads",
+              "Facebook_Form_Id__c" : formId // LEAD FORM ID
+            }]};
         } else {
-          console.log ('INSERT LEAD with phone: ' + name + ' ' + email + ' ' + phone + ' ' + formId); 
+          inputJson = {"action": "createOrUpdate", "lookupField": "email",
+            "input": [{
+              "email": email,
+              "firstName": firstName,
+              "lastName": lastName,
+              "phone": phone,
+              "leadSource": "Facebook Lead Ads",
+              "Facebook_Form_Id__c" : formId // LEAD FORM ID
+            }]};
         }
         
-        console.log('ACESS_TOKEN:' + token);
-        
+        //'https://615-KOO-288.mktorest.com/rest/v1/leads.json?access_token='+ JSON.parse(str).access_token
+        unirest.post('https://theredpin.herokuapp.com/testingEndPoint')
+          .type('application/json')
+          .send(inputJson)
+          .end(function (response) {
+            console.log('MKT Response:' + response.body);
+          }); 
+
     }
 
   ]);

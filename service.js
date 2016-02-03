@@ -36,7 +36,9 @@ app.get('/MarketoLeadGen', marketoLeadGenController.get);
 app.post('/MarketoLeadGen', marketoLeadGenController.post); 
 
 var marketoNewLeadGenController = require('./controllers/marketoNewLeadGen');
+var testingEndPointController = require('./controllers/testingEndPoint');
 app.post('/testing', marketoNewLeadGenController.post); 
+app.post('/testingEndPoint', testingEndPointController.post);
 
 
 /*
