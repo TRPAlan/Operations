@@ -123,6 +123,10 @@ exports.post = function (req, res) {
   console.log ('LUCY changes[0].field:' + req.body.entry[0].changes[0].field);
 
   for (var i=0; i< req.body.entry[0].changes.length; i++){
+    leadEmail = null;
+    leadPhone = null;
+    leadName = null;
+    leadFormId = null; 
     var leadGenId = req.body.entry[0].changes[i].value.leadgen_id; 
     // log out information related to lead
       console.log('change.field: ' + req.body.entry[0].changes[i].field);
