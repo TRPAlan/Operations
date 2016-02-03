@@ -96,7 +96,7 @@ var chainedRequests = function (leadGenId, formId) {
             }]};
         }
         
-        unirest.post('https://615-KOO-288.mktorest.com/rest/v1/leads.json?access_token='+ JSON.parse(str).access_token)
+        unirest.post('https://615-KOO-288.mktorest.com/rest/v1/leads.json?access_token='+ token)
           .type('application/json')
           .send(inputJson)
           .end(function (response) {
