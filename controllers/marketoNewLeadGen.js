@@ -141,7 +141,7 @@ var chainedRequests = function (leadGenId, formId) {
       .end(function (response) {
         var firstName = name.split(' ').slice(0, -1).join(' ');
         var lastName = name.split(' ').slice(-1).join(' ');
-        console.log('mkt access token:' + response.body); 
+        console.log('mkt access token:' + response.body.access_token); 
         console.log ('INSERT LEAD: ' + name + ' ' + email + ' ' + phone + ' ' + formId); 
 
       });
