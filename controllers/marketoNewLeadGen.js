@@ -1,24 +1,6 @@
 var unirest = require('unirest');
 var async = require('async');
 
-var marketoCallback = function (response, formId, name, email, phone) {
-  var str = '';
-  //another chunk of data has been recieved, so append it to `str`
-  response.on('data', function (chunk) {
-    str += chunk;
-  });
-  //the whole response has been recieved
-  response.on('end', function () {
-    console.log(str);
-    var firstName = name.split(' ').slice(0, -1).join(' ');
-    var lastName = name.split(' ').slice(-1).join(' ');
-    console.log ('INSERT LEAD: ' + name + ' ' + email + ' ' + phone + ' ' + formId); 
-
-    /*
-*/
-
-  }); 
-}
 
 // GET 
 exports.get = function (req, res) {
@@ -34,7 +16,7 @@ exports.get = function (req, res) {
 // POST 
 exports.post = function (req, res) {
 
-  console.log('LUCY DEBUG: Got a POST request');
+  console.log('MarketoLeadGen: Got a POST request');
 
   var object = req.body.object; 
   var changes = req.body.entry[0].changes; 
@@ -42,13 +24,11 @@ exports.post = function (req, res) {
   for (var i=0; i< req.body.entry[0].changes.length; i++){
     var leadGenId = req.body.entry[0].changes[i].value.leadgen_id; 
     // log out information related to lead
-      console.log('change.leadgenID: ' + req.body.entry[0].changes[i].value.leadgen_id);
-      console.log('change.formID: ' + req.body.entry[0].changes[i].value.form_id);
-      console.log('change.created_time: ' + req.body.entry[0].changes[i].value.created_time);
+      console.log('MarketoLeadGen: leadgenID: ' + req.body.entry[0].changes[i].value.leadgen_id + ' formID: '+ req.body.entry[0].changes[i].value.form_id + ' createdTime:' + req.body.entry[0].changes[i].value.created_time);
       chainedRequests(req.body.entry[0].changes[i].value.leadgen_id, req.body.entry[0].changes[i].value.form_id); 
   }
 
-  res.send('postFacebookLeadGen SUCCESS');
+  res.send('post MarketoLeadGen: SUCCESS');
 }
 
 
@@ -64,18 +44,17 @@ var chainedRequests = function (leadGenId, formId) {
 
         for (var i=0; i< dataList.length; i++){
           if (dataList[i].name == 'full_name') {
-            console.log('lead name: ' + dataList[i].values[0]);
             name = dataList[i].values[0];
           }
           if (dataList[i].name == 'email') {
-            console.log('lead email: ' + dataList[i].values[0]);
             email = dataList[i].values[0];
           }
           if (dataList[i].name == 'phone_number') {
-            console.log('lead phone: ' + dataList[i].values[0]);
             phone = dataList[i].values[0];
           }
         }
+
+        console.log('MarketoLeadGen: phone:' + phone + ' name:' + name + ' email:' + email);
 
         callback(null, name, email, phone);
 
@@ -117,14 +96,12 @@ var chainedRequests = function (leadGenId, formId) {
             }]};
         }
         
-        //'https://615-KOO-288.mktorest.com/rest/v1/leads.json?access_token='+ JSON.parse(str).access_token
-        unirest.post('https://theredpin.herokuapp.com/testingEndPoint')
+        unirest.post('https://615-KOO-288.mktorest.com/rest/v1/leads.json?access_token='+ JSON.parse(str).access_token)
           .type('application/json')
           .send(inputJson)
           .end(function (response) {
-            console.log('MKT Response:' + response.body);
+            console.log('MKT Upsert Response:' + response.body);
           }); 
-
     }
 
   ]);
