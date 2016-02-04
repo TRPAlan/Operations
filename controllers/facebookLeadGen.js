@@ -85,9 +85,10 @@ var insertLead = function (leadGenId, formId) {
       sfdcOrg.insert({ sobject: newLead }, function(err, resp){
         if (err) {
             console.log('INSERT ERROR: ' + err.message);
-        } 
-        if (resp.success == true) {
-          console.log('INSERT SUCCESS');
+        } else {
+          if (resp.success == true) {
+            console.log('INSERT SUCCESS');
+          }
         }
       });
 
