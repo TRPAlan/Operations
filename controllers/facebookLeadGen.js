@@ -48,7 +48,7 @@ exports.post = function (req, res) {
 
         var leadGenId = req.body.entry[0].changes[i].value.leadgen_id; 
         var formId = req.body.entry[0].changes[i].value.form_id; 
-        console.log('MarketoLeadGen: leadgenID: ' + leadGenId + ' formID: '+ formId + ' createdTime:' + req.body.entry[0].changes[i].value.created_time);
+        console.log('FacebookLeadGen: leadgenID: ' + leadGenId + ' formID: '+ formId + ' createdTime:' + req.body.entry[0].changes[i].value.created_time);
         insertLead(leadGenId, formId); 
 
       }
@@ -68,10 +68,11 @@ var insertLead = function (leadGenId, formId) {
     function(response){
       var dataList = JSON.parse(response.body).field_data;
       var newLead = nforce.createSObject('Lead');
-      
+      var name;   
+
       for (var i=0; i< dataList.length; i++){
         
-        if (dataList[i].name == 'full_name') { newLead.set('LastName', dataList[i].values[0]); }
+        if (dataList[i].name == 'full_name') { name = dataList[i].values[0]; }
 
         if (dataList[i].name == 'email') { newLead.set('Email', dataList[i].values[0]); }
 
@@ -79,8 +80,13 @@ var insertLead = function (leadGenId, formId) {
 
       }
 
+      var firstName = name.split(' ').slice(0, -1).join(' ');
+      var lastName = name.split(' ').slice(-1).join(' ');
+      newLead.set('FirstName', lastName); 
+      newLead.set('LastName', lastName); 
+
       newLead.set('LeadSource','Facebook Lead Ads'); 
-      newLead.set('Facebook_Form_Id__c', formId); 
+      newLead.set('Facebook_Form_ID__c', formId); 
 
       sfdcOrg.insert({ sobject: newLead }, function(err, resp){
         if (err) {
