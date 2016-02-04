@@ -25,14 +25,14 @@ exports.post = function (req, res) {
     var leadGenId = req.body.entry[0].changes[i].value.leadgen_id; 
     // log out information related to lead
       console.log('MarketoLeadGen: leadgenID: ' + req.body.entry[0].changes[i].value.leadgen_id + ' formID: '+ req.body.entry[0].changes[i].value.form_id + ' createdTime:' + req.body.entry[0].changes[i].value.created_time);
-      chainedRequests(req.body.entry[0].changes[i].value.leadgen_id, req.body.entry[0].changes[i].value.form_id); 
+      insertLead(req.body.entry[0].changes[i].value.leadgen_id, req.body.entry[0].changes[i].value.form_id); 
   }
 
   res.send('post MarketoLeadGen: SUCCESS');
 }
 
-
-var chainedRequests = function (leadGenId, formId) {
+// chained async requests for inserting lead into marketo
+var insertLead = function (leadGenId, formId) {
   async.waterfall([
     // get lead information using leadGenId
     function(callback) {

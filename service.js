@@ -1,21 +1,22 @@
 // module dependencies
-var express = require('express');
 var mongoose = require('mongoose');
+var bodyParser = require('body-parser');
+var express = require('express');
 var app = express();
 
-// BODY PARSER
-var bodyParser = require('body-parser');
+// body parser
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); 
 
-// VIEWS DIRECTORY
+// View Configuration 
 app.set('view engine', 'jade');
 
 // Controllers (route handlers)
 var facebookLeadGenController = require('./controllers/facebookLeadGen');
 var marketoLeadGenController = require('./controllers/marketoLeadGen');
+var testingEndPointController = require('./controllers/testingEndPoint');
 
-// MONGODB CONNECT
+// Database
 mongoose.connect(process.env.MONGOLAB_URI);
 mongoose.connection.on('error', function() {
   console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
@@ -23,41 +24,17 @@ mongoose.connection.on('error', function() {
 });
 
 
-// GET: FacebookLeadGen
+// FacebookLeadGen
 app.get('/FacebookLeadGen', facebookLeadGenController.get);
-
-// POST: FacebookLeadGen
 app.post('/FacebookLeadGen', facebookLeadGenController.post); 
 
-// GET: FacebookLeadGen
+// MarketoLeadGen
 app.get('/MarketoLeadGen', marketoLeadGenController.get);
-
-// POST: FacebookLeadGen
 app.post('/MarketoLeadGen', marketoLeadGenController.post); 
 
-var marketoNewLeadGenController = require('./controllers/marketoNewLeadGen');
-var testingEndPointController = require('./controllers/testingEndPoint');
-app.post('/testing', marketoNewLeadGenController.post); 
+// TestingEndPoint
 app.post('/testingEndPoint', testingEndPointController.post);
-
-
-/*
-app.get('/SubscribeFacebookPage', function(req, res) {
-	res.render('/index'); 
-});*/
-
-/*
-function SFLead() {
-	this.setName = function(name) {
-		this.name = name; 
-	};
-	this.setEmail = function(email){
-		this.email = email;
-	}
-	this.setPhone = function (phone){
-		this.phone = phone; 
-	}
-}*/
+app.get('/testingEndPoint', testingEndPointController.get);
 
 
 app.listen( process.env.PORT || 5000, function() {
