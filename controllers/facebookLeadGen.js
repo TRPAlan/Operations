@@ -86,7 +86,7 @@ var insertLead = function (leadGenId, formId) {
       newLead.set('LastName', lastName); 
 
       newLead.set('LeadSource','Facebook Lead Ads'); 
-      newLead.set('Facebook_Form_ID__c', formId.toString() ); 
+      newLead.set('Facebook_Form_ID__c', formId); 
 
       sfdcOrg.insert({ sobject: newLead }, function(err, resp){
         if (err) {
