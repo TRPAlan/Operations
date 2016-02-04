@@ -1,7 +1,8 @@
-//var https = require('https');
 var unirest = require('unirest');
+var async = require('async');
 
-// SALESFORCE SETUP
+
+// Salesforce setup
 var nforce = require('nforce');
 var salesforceApi = process.env.SALESFORCE_API || '35.0';
 var sfdcOrg = nforce.createConnection({
@@ -9,8 +10,8 @@ var sfdcOrg = nforce.createConnection({
 	clientId: process.env.SALESFORCE_CONSUMER_KEY,
 	clientSecret: process.env.SALESFORCE_CONSUMER_SECRET,
 	redirectUri: '',
-	apiVersion: salesforceApi,  // optional, defaults to v24.0
-	environment: 'sandbox',  // optional, sandbox or production, production default
+	apiVersion: salesforceApi,  
+	environment: 'sandbox',  // sandbox or production (default)
 	autorefresh: true
 });
 
@@ -26,57 +27,15 @@ exports.get = function (req, res) {
 };
 
 
-var insertLeadCallback = function(response) {
-  var dataList = JSON.parse(response.body).field_data;
-
-  var newLead = nforce.createSObject('Lead');
-  for (var i=0; i< dataList.length; i++){
-    if (dataList[i].name == 'full_name') {
-      console.log('lead name: ' + dataList[i].values[0]);
-      newLead.set('LastName', dataList[i].values[0]);
-    }
-    if (dataList[i].name == 'email') {
-      console.log('lead email: ' + dataList[i].values[0]);
-      newLead.set('Email', dataList[i].values[0]);
-    }
-    if (dataList[i].name == 'phone_number') {
-      console.log('lead phone: ' + dataList[i].values[0]);
-      newLead.set('Phone', dataList[i].values[0]);
-    }
-    newLead.set('Acquisition_Lead_Source__c','Facebook Lead Ads'); // FOR TESTING PURPOSE ONLY FOR NOW
-  }
-
-  sfdcOrg.insert({ sobject: newLead }, function(err, resp){
-      if (err) {
-          console.log('INSERT ERROR: ' + err.message);
-      } else {
-        if (resp.success == true) {
-        console.log('INSERT SUCCESS');
-          }
-      }
-    });
-
-};
-
-
 // POST 
 exports.post = function (req, res) {
   
-  console.log('LUCY DEBUG: Got a POST request');
+  console.log('FacebookLeadGen: Got a POST request');
 
   var object = req.body.object; 
   var changes = req.body.entry[0].changes; 
 
-  // log out general object properties 
-  console.log ('object:' + object);
-  console.log ('LUCY entry[0]:' + req.body.entry[0]);
-  console.log ('LUCY changes:' + req.body.entry[0].changes);
-  console.log ('LUCY id:' + req.body.entry[0].id);
-  console.log ('LUCY time :' + req.body.entry[0].time);
-  console.log ('LUCY changes[0]:' + req.body.entry[0].changes[0]);
-  console.log ('LUCY changes[0].field:' + req.body.entry[0].changes[0].field);
-
-
+  // Salesforce Authentication 
   sfdcOrg.authenticate({ username: process.env.SALESFORCE_USERNAME, password: process.env.SALESFORCE_PASSWORD },
         function(err, resp){
 		if (err) {
@@ -84,22 +43,58 @@ exports.post = function (req, res) {
 		} else {
 		  console.log('SF Authentication Access Token: ' + resp.access_token);
 
-		  // for each leadgen Id
+		  // insert lead for each leadgenId received
 		  for (var i=0; i< req.body.entry[0].changes.length; i++){
-		  	var leadGenId = req.body.entry[0].changes[i].value.leadgen_id; 
-		  	// log out information related to lead
-  			console.log('change.field: ' + req.body.entry[0].changes[i].field);
-  			console.log('change.leadgenID: ' + req.body.entry[0].changes[i].value.leadgen_id);
-  			console.log('change.formID: ' + req.body.entry[0].changes[i].value.form_id);
-  			console.log('change.created_time: ' + req.body.entry[0].changes[i].value.created_time);
 
-        unirest.get('https://graph.facebook.com/' + leadGenId + '?access_token='+ process.env.FACEBOOK_PAGE_TOKEN)
-        .end(insertLeadCallback);
+        var leadGenId = req.body.entry[0].changes[i].value.leadgen_id; 
+        var formId = req.body.entry[0].changes[i].value.form_id; 
+        console.log('MarketoLeadGen: leadgenID: ' + leadGenId + ' formID: '+ formId + ' createdTime:' + req.body.entry[0].changes[i].value.created_time);
+        insertLead(leadGenId, formId); 
 
-			}
+      }
 
 		}
 	});
 
-	res.send('postFacebookLeadGen SUCCESS');
+	res.send('post FacebookLeadGen: SUCCESS');
 }; 
+
+
+// insert lead into Salesforce
+var insertLead = function (leadGenId, formId) {
+  
+  unirest.get('https://graph.facebook.com/' + leadGenId + '?access_token='+ process.env.FACEBOOK_PAGE_TOKEN)
+  .end(
+    function(response){
+      var dataList = JSON.parse(response.body).field_data;
+      var newLead = nforce.createSObject('Lead');
+      
+      for (var i=0; i< dataList.length; i++){
+        
+        if (dataList[i].name == 'full_name') { newLead.set('LastName', dataList[i].values[0]); }
+
+        if (dataList[i].name == 'email') { newLead.set('Email', dataList[i].values[0]); }
+
+        if (dataList[i].name == 'phone_number') { newLead.set('Phone', dataList[i].values[0]); }
+
+      }
+
+      newLead.set('LeadSource','Facebook Lead Ads'); 
+      newLead.set('Facebook_Form_Id__c', formId); 
+
+      sfdcOrg.insert({ sobject: newLead }, function(err, resp){
+        if (err) {
+            console.log('INSERT ERROR: ' + err.message);
+        } 
+        if (resp.success == true) {
+          console.log('INSERT SUCCESS');
+        }
+      });
+
+
+    });
+
+}; 
+
+
+
