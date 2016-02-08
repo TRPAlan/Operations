@@ -10,7 +10,7 @@ exports.get = function (req, res) {
     } else {
       res.send('Invalid Verify Token');
     }
-};
+}
 
 
 // POST 
@@ -107,6 +107,6 @@ var insertLead = function (leadGenId, formId) {
     }
 
   ]);
-};
+}
 
 

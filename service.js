@@ -15,6 +15,8 @@ app.set('view engine', 'jade');
 var facebookLeadGenController = require('./controllers/facebookLeadGen');
 var marketoLeadGenController = require('./controllers/marketoLeadGen');
 var testingEndPointController = require('./controllers/testingEndPoint');
+var houseDetailController = require('./controllers/houseDetailHtmlGen');
+var valuePropsController = requires('./controllers/valueProps');
 
 // Database
 mongoose.connect(process.env.MONGOLAB_URI);
@@ -35,6 +37,12 @@ app.post('/MarketoLeadGen', marketoLeadGenController.post);
 // TestingEndPoint
 app.post('/testingEndPoint', testingEndPointController.post);
 app.get('/testingEndPoint', testingEndPointController.get);
+
+// HouseDetailHtmlGen
+app.get('/houseDetailHtmlGen', houseDetailController);
+
+// valueProps
+app.get('/valueProps', valuePropsController);
 
 
 app.listen( process.env.PORT || 5000, function() {

@@ -1,0 +1,14 @@
+
+// GET 
+exports.get = function (req, res) {
+	var beds = req.param('beds'); 
+	var baths = req.param('baths'); 
+	var img_src = req.param('img_src'); 
+	var address = req.param('address'); 
+	var html; 
+
+	
+	
+	
+	res.send(html);
+}
