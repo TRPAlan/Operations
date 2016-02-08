@@ -16,7 +16,7 @@ var facebookLeadGenController = require('./controllers/facebookLeadGen');
 var marketoLeadGenController = require('./controllers/marketoLeadGen');
 var testingEndPointController = require('./controllers/testingEndPoint');
 var houseDetailController = require('./controllers/houseDetailHtmlGen');
-var valuePropsController = requires('./controllers/valueProps');
+var valuePropsController = require('./controllers/valueProps');
 
 // Database
 mongoose.connect(process.env.MONGOLAB_URI);
