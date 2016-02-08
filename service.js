@@ -39,10 +39,10 @@ app.post('/testingEndPoint', testingEndPointController.post);
 app.get('/testingEndPoint', testingEndPointController.get);
 
 // HouseDetailHtmlGen
-app.get('/houseDetailHtmlGen', houseDetailController);
+app.get('/houseDetailHtmlGen', houseDetailController.get);
 
 // valueProps
-app.get('/valueProps', valuePropsController);
+app.get('/valueProps', valuePropsController.get);
 
 
 app.listen( process.env.PORT || 5000, function() {
